@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>הַסֵּפֶר · מעקב כתיבת סת״ם</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+body { background: #F6F3EC; }
+.page { min-height: 100vh; color: #17130C; font-family: 'Rubik', sans-serif; max-width: 560px; margin: 0 auto; padding: 20px 14px 70px; }
+.header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #17130C; padding-bottom: 12px; margin-bottom: 14px; }
+.eyebrow { font-size: 11px; letter-spacing: .2em; color: #6F6857; margin-bottom: 2px; }
+.h1 { font-family: 'Suez One', serif; font-size: 34px; line-height: 1; font-weight: 400; }
+.bigPct { font-family: 'Suez One', serif; font-size: 28px; color: #A67C1B; }
+.h2 { font-family: 'Suez One', serif; font-size: 18px; font-weight: 400; margin-bottom: 12px; }
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.tab { flex: 1; padding: 12px 0; font-family: 'Rubik'; font-size: 14.5px; background: transparent; border: 1px solid #E3DDCE; color: #6F6857; cursor: pointer; border-radius: 3px; }
+.tab.on { background: #17130C; color: #F6F3EC; border-color: #17130C; }
+.hero { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
+.heroMain { display: flex; flex-direction: column; }
+.big { font-family: 'Suez One', serif; font-size: 92px; line-height: .95; }
+.lbl { font-size: 13px; color: #6F6857; }
+.heroGrid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat { border: 1px solid #E3DDCE; background: #FCFBF6; padding: 10px 12px; border-radius: 3px; display: flex; flex-direction: column; }
+.stat b { font-family: 'Suez One', serif; font-size: 22px; font-weight: 400; }
+.stat span { font-size: 11px; color: #6F6857; }
+.statGold { border-color: #A67C1B; } .statGold b { color: #A67C1B; }
+.statRed { border-color: #B4482B; } .statRed b { color: #B4482B; }
+.status { font-size: 14px; color: #6F6857; margin: 0 2px 16px; }
+.card { background: #FCFBF6; border: 1px solid #E3DDCE; border-radius: 4px; padding: 16px; margin-bottom: 14px; }
+.rowBetween { display: flex; justify-content: space-between; align-items: baseline; }
+.mono { font-family: 'Suez One', serif; font-size: 18px; color: #A67C1B; }
+.amudBar { height: 10px; background: #EDE8DB; border-radius: 5px; overflow: hidden; margin: 8px 0 6px; }
+.amudFill { height: 100%; background: linear-gradient(90deg, #17130C, #3A3222); transition: width .5s; border-radius: 5px; }
+.hint { font-size: 12.5px; color: #8C8574; line-height: 1.6; }
+.btnGrid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 8px; margin: 14px 0 10px; }
+button { font-family: 'Rubik', sans-serif; cursor: pointer; border-radius: 3px; transition: filter .15s; border: none; font-size: 14px; }
+button:active { filter: brightness(1.25); }
+.tall { padding: 16px 0; font-size: 17px; font-weight: 500; }
+.solid { background: #17130C; color: #F6F3EC; border: 1px solid #17130C; }
+.ghost { background: transparent; border: 1px solid #17130C; color: #17130C; padding: 12px 14px; }
+.gold { background: #A67C1B; border: 1px solid #A67C1B; color: #FCFBF6; padding: 14px; font-size: 15px; font-weight: 500; }
+.danger { background: #B4482B; border: 1px solid #B4482B; color: #fff; padding: 12px 16px; }
+.dangerGhost { background: transparent; border: 1px solid #B4482B; color: #B4482B; }
+button:disabled { opacity: .35; }
+.small { padding: 8px 12px; font-size: 13px; }
+.rowGap { display: flex; gap: 8px; align-items: center; }
+.grow { flex: 1; }
+.inp { font-family: 'Rubik'; font-size: 16px; border: 1px solid #E3DDCE; background: #fff; padding: 12px; border-radius: 3px; width: 100%; }
+.inp.small { width: 84px; padding: 8px; }
+.inp:focus, button:focus-visible { outline: 2px solid #A67C1B; outline-offset: 1px; }
+.scrollGrid { display: flex; flex-wrap: wrap; gap: 3px; direction: rtl; }
+.blk { width: 16px; height: 22px; border-radius: 2px; background: #E9E4D6; display: inline-block; padding: 0; border: none; }
+.blk.done { background: #17130C; }
+.blk.current { background: #A67C1B; animation: pulse 1.5s ease-in-out infinite; }
+.blk.hole { background: #FFFFFF; border: 1.5px dashed #B4482B; }
+@keyframes pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .blk.current, .swOver #swLap, .hcToday { animation: none !important; } }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: #6F6857; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend .blk { width: 10px; height: 14px; }
+.leverGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.chart { display: flex; align-items: flex-end; gap: 4px; height: 90px; direction: rtl; border-bottom: 1px solid #E3DDCE; padding-bottom: 3px; margin-bottom: 12px; }
+.barCol { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.bar { width: 100%; max-width: 22px; background: #17130C; min-height: 2px; border-radius: 2px 2px 0 0; }
+.barGold { background: #A67C1B; }
+.barLbl { font-size: 9px; color: #9A9382; margin-top: 3px; }
+.histRow { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #EDE8DB; font-size: 14px; }
+.histDate { color: #6F6857; min-width: 58px; }
+.histLines { font-weight: 500; }
+.lapOver { color: #B4482B; }
+.lapOverTag { font-size: 11px; color: #B4482B; border: 1px solid #B4482B; border-radius: 3px; padding: 2px 6px; }
+.setGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; color: #6F6857; }
+.footer { text-align: center; font-size: 12px; color: #9A9382; margin-top: 6px; }
+.toast { position: fixed; bottom: 22px; right: 50%; transform: translateX(50%); background: #17130C; color: #F6F3EC; padding: 12px 22px; border-radius: 4px; font-size: 14px; z-index: 50; animation: rise .25s ease-out; }
+.toastBig { background: #A67C1B; font-size: 16px; font-weight: 500; padding: 16px 26px; }
+@keyframes rise { from { opacity: 0; transform: translateX(50%) translateY(12px); } }
+.overlay { position: fixed; inset: 0; background: rgba(23,19,12,.45); display: grid; place-items: center; z-index: 60; padding: 20px; }
+.modal { background: #FCFBF6; border-radius: 6px; padding: 22px; max-width: 380px; width: 100%; }
+.modal p { font-size: 15px; line-height: 1.6; margin-bottom: 18px; }
+.swCard { border-color: #17130C; }
+.swMain { text-align: center; padding: 18px 0 10px; }
+#swLap { font-family: 'Suez One', serif; font-size: 72px; line-height: 1; letter-spacing: .02em; }
+.swSub { font-size: 13px; color: #6F6857; margin-top: 6px; }
+.swOver #swLap { color: #B4482B; animation: pulse 1s ease-in-out infinite; }
+.hidden { display: none; }
+/* Hebrew calendar picker */
+.dateBtn { width: 100%; background: #fff; border: 1px solid #E3DDCE; padding: 14px; border-radius: 3px; text-align: right; font-size: 15px; }
+.dateBtn b { font-family: 'Suez One', serif; font-weight: 400; }
+.dateBtn small { color: #6F6857; display: block; font-size: 12px; margin-top: 2px; }
+.hcHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.hcTitle { font-family: 'Suez One', serif; font-size: 19px; }
+.hcNav { background: transparent; border: 1px solid #17130C; width: 42px; height: 42px; font-size: 18px; border-radius: 3px; }
+.hcWeek { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+.hcWd { text-align: center; font-size: 11px; color: #6F6857; padding: 4px 0; }
+.hcGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.hcCell { aspect-ratio: 1; border: 1px solid transparent; border-radius: 3px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; padding: 0; }
+.hcCell small { font-size: 8.5px; color: #9A9382; }
+.hcHoly { background: #F3EAD4; color: #8C6812; }
+.hcShab { background: #EDE8DB; color: #6F6857; }
+.hcPast { opacity: .3; }
+.hcSel { background: #17130C !important; color: #F6F3EC !important; }
+.hcSel small { color: #C9C2AF; }
+.hcToday { border-color: #A67C1B; }
+.hcLegend { display: flex; gap: 12px; margin-top: 12px; font-size: 11px; color: #6F6857; flex-wrap: wrap; }
+.hcDot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-left: 3px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <div>
+      <div class="eyebrow">מעקב כתיבה · סת״ם</div>
+      <h1 class="h1">הַסֵּפֶר</h1>
+    </div>
+    <div class="bigPct" id="pct"></div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab on" data-tab="main">היום</button>
+    <button class="tab" data-tab="sw">שעון</button>
+    <button class="tab" data-tab="history">יומן</button>
+    <button class="tab" data-tab="settings">הגדרות</button>
+  </nav>
+
+  <div id="tab-main">
+    <section class="hero">
+      <div class="heroMain">
+        <span class="big" id="remaining"></span>
+        <span class="lbl">עמודים עד הסיום</span>
+      </div>
+      <div class="heroGrid">
+        <div class="stat"><b id="holding"></b><span>אוחז בעמוד</span></div>
+        <div class="stat" id="holesStat"><b id="holesCount"></b><span>עמודים מחוררים</span></div>
+        <div class="stat"><b id="streak"></b><span>רצף ימים</span></div>
+        <div class="stat"><b id="todayLines"></b><span>שורות היום</span></div>
+      </div>
+    </section>
+
+    <p class="status" id="statusLine"></p>
+
+    <section class="card">
+      <div class="rowBetween">
+        <h2 class="h2">העמוד הנוכחי · <span id="curAmud"></span></h2>
+        <span class="mono" id="bufferTxt"></span>
+      </div>
+      <div class="amudBar"><div class="amudFill" id="amudFill"></div></div>
+      <p class="hint">מגיעים למכסה — העמוד נסגר ונרשם במגילה אוטומטית.</p>
+      <div class="btnGrid">
+        <button class="solid tall" onclick="app.addLines(5)">+5</button>
+        <button class="solid tall" id="busyBtn"></button>
+        <button class="solid tall" onclick="app.completeAmud()">השלם עמוד</button>
+      </div>
+      <div class="rowGap">
+        <input class="inp grow" type="number" min="1" inputmode="numeric" placeholder="מספר שורות אחר" id="customLines">
+        <button class="ghost" onclick="app.addCustom()">רישום</button>
+        <button class="ghost" onclick="app.undoLast()">ביטול אחרון</button>
+      </div>
+      <div id="fillHoleWrap"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">המגילה</h2>
+      <p class="hint" style="margin-bottom:8px">לחיצה על עמוד שחור — מחיקה: הוא יהפוך למחורר במקומו. לחיצה על מחורר — השלמה.</p>
+      <div class="scrollGrid" id="scrollGrid"></div>
+      <div class="legend">
+        <span><i class="blk done"></i>נכתב</span>
+        <span><i class="blk current"></i>הקולמוס</span>
+        <span><i class="blk hole"></i>מחורר</span>
+        <span><i class="blk"></i>ממתין</span>
+      </div>
+      <p class="hint" id="holesList" style="margin-top:8px"></p>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">המנוף — תאריך ההכנסה</h2>
+      <div id="leverBox"></div>
+      <button class="dateBtn" id="dateBtn" style="margin-top:10px" onclick="hc.open()"></button>
+      <p class="hint" id="leverNote" style="margin-top:8px"></p>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">קצב · 14 ימים</h2>
+      <div class="chart" id="chart"></div>
+      <div class="leverGrid" id="paceGrid"></div>
+    </section>
+  </div>
+
+  <div id="tab-sw" class="hidden">
+    <section class="card swCard">
+      <div class="rowBetween">
+        <h2 class="h2">שעון עצר · הקפה = שורה</h2>
+        <span class="mono" id="lapCount">0 שורות</span>
+      </div>
+      <div class="swMain" id="swMain">
+        <div id="swLap">00:00</div>
+        <div class="swSub">שורה נוכחית · סה״כ <span id="swTotal">00:00</span></div>
+      </div>
+      <div class="btnGrid">
+        <button class="solid tall" id="swStartBtn" onclick="sw.startPause()">התחל</button>
+        <button class="gold tall" id="swLapBtn" onclick="sw.lap()" disabled>הקפה ✓</button>
+        <button class="ghost tall" id="swResetBtn" onclick="sw.reset()" disabled>איפוס</button>
+      </div>
+      <div class="rowGap" style="margin-top:10px">
+        <label class="hint" style="white-space:nowrap">התראה אחרי</label>
+        <input class="inp small" type="number" step="0.5" min="0.5" inputmode="decimal" id="threshold">
+        <span class="hint">דקות לשורה — צפצוף כפול כשעוברים</span>
+      </div>
+      <p class="hint" style="margin-top:8px" id="swHint"></p>
+    </section>
+    <section class="card">
+      <div class="rowBetween">
+        <h2 class="h2">הקפות</h2>
+        <span class="hint" id="lapAvg"></span>
+      </div>
+      <div id="lapsList"><p class="hint">ההקפה הראשונה תופיע כאן — החדשה תמיד למעלה.</p></div>
+    </section>
+  </div>
+
+  <div id="tab-history" class="hidden">
+    <section class="card">
+      <h2 class="h2">יומן רישומים</h2>
+      <div id="histList"></div>
+      <p class="hint" id="histTotal" style="margin-top:12px"></p>
+    </section>
+  </div>
+
+  <div id="tab-settings" class="hidden">
+    <section class="card">
+      <h2 class="h2">הגדרות</h2>
+      <div class="setGrid">
+        <label class="field">סה״כ עמודים בספר<input class="inp" type="number" inputmode="numeric" id="set-totalAmud"></label>
+        <label class="field">נקודת פתיחה — עמודים שנכתבו<input class="inp" type="number" inputmode="numeric" id="set-baseWritten"></label>
+        <label class="field">שורות בעמוד<input class="inp" type="number" inputmode="numeric" id="set-linesPerAmud"></label>
+        <label class="field">מכסת יום עומס<input class="inp" type="number" inputmode="numeric" id="set-busyQuota"></label>
+      </div>
+      <p class="hint" style="margin-top:12px">עמודים מחוררים מנוהלים במגילה עצמה — לחיצה על עמוד מוחקת או משלימה אותו במקומו המדויק.</p>
+      <button class="danger" style="margin-top:14px" onclick="app.resetAll()">איפוס כל הנתונים</button>
+    </section>
+  </div>
+
+  <footer class="footer" id="footer">נשמר אוטומטית · אין יום אפס</footer>
+</div>
+
+<div id="toastHost"></div>
+<div id="modalHost"></div>
+
+<script>
+"use strict";
+
+/* ═══ state ═══ */
+const KEY = "sefer-torah-html-v1";
+const DEFAULTS = {
+  baseWritten: 145,
+  totalAmud: 245,
+  holes: [10,11,12,13,14,15,16],
+  targetDate: "",
+  linesPerAmud: 42,
+  busyQuota: 10,
+  swThresholdMin: 2,
+  history: []
+};
+
+let st;
+try { st = Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(KEY) || "{}")); }
+catch(e){ st = Object.assign({}, DEFAULTS); }
+
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(st)); document.getElementById("footer").textContent = "נשמר אוטומטית · אין יום אפס"; }
+  catch(e){ document.getElementById("footer").textContent = "⚠️ שגיאת שמירה"; }
+}
+
+/* ═══ helpers ═══ */
+const isoOf = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+const todayISO = () => isoOf(new Date());
+const heDate = s => new Date(s + "T00:00:00").toLocaleDateString("he-IL", {day:"numeric", month:"short"});
+const fmt = ms => { const t = Math.floor(ms/1000); return String(Math.floor(t/60)).padStart(2,"0") + ":" + String(t%60).padStart(2,"0"); };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const atMidnight = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+
+/* ═══ Hebrew calendar (built-in Intl, no libraries) ═══ */
+let hebOK = true, hebFmtEn;
+try {
+  hebFmtEn = new Intl.DateTimeFormat("en-u-ca-hebrew-nu-latn", { year: "numeric", month: "long", day: "numeric" });
+  hebFmtEn.format(new Date());
+} catch(e){ hebOK = false; }
+
+const HEB_MONTHS = { "Tishri":"תשרי","Heshvan":"חשוון","Kislev":"כסלו","Tevet":"טבת","Shevat":"שבט",
+  "Adar":"אדר","Adar I":"אדר א׳","Adar II":"אדר ב׳","Nisan":"ניסן","Iyar":"אייר","Sivan":"סיוון",
+  "Tamuz":"תמוז","Av":"אב","Elul":"אלול" };
+
+function hInfo(d){
+  const parts = hebFmtEn.formatToParts(d);
+  const r = {};
+  for (const p of parts){
+    if (p.type === "day") r.day = +p.value;
+    if (p.type === "month") r.month = p.value;
+    if (p.type === "year") r.year = +p.value;
+  }
+  return r;
+}
+
+function gDay(n){
+  if (n === 15) return "ט״ו";
+  if (n === 16) return "ט״ז";
+  const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
+  const tens = { 1:"י", 2:"כ", 3:"ל" };
+  if (n < 10) return ones[n] + "׳";
+  const t = Math.floor(n/10), u = n % 10;
+  return u ? tens[t] + "״" + ones[u] : tens[t] + "׳";
+}
+
+function gYear(y){
+  let n = y % 1000;
+  const vals = [[400,"ת"],[300,"ש"],[200,"ר"],[100,"ק"],[90,"צ"],[80,"פ"],[70,"ע"],[60,"ס"],[50,"נ"],[40,"מ"],[30,"ל"],[20,"כ"],[10,"י"],[9,"ט"],[8,"ח"],[7,"ז"],[6,"ו"],[5,"ה"],[4,"ד"],[3,"ג"],[2,"ב"],[1,"א"]];
+  let out = "";
+  for (const v of vals){ while (n >= v[0]) { out += v[1]; n -= v[0]; } }
+  out = out.replace("יה","טו").replace("יו","טז");
+  return out.length > 1 ? out.slice(0,-1) + "״" + out.slice(-1) : out + "׳";
+}
+
+function hebStr(d){
+  if (!hebOK) return "";
+  const h = hInfo(d);
+  return gDay(h.day) + " " + (HEB_MONTHS[h.month] || h.month) + " " + gYear(h.year);
+}
+function hebMonthYear(d){
+  if (!hebOK) return "";
+  const h = hInfo(d);
+  return (HEB_MONTHS[h.month] || h.month) + " " + gYear(h.year);
+}
+
+/* days when a sofer cannot write (Israel):
+   Shabbat · Rosh Hashana (1-2 Tishrei) · Yom Kippur (10) ·
+   Sukkot through Shemini Atzeret/Simchat Torah (15-22 Tishrei) ·
+   Pesach incl. chol hamoed (15-21 Nisan) · Shavuot (6 Sivan) */
+function noWriteDay(d){
+  if (d.getDay() === 6) return "שבת";
+  if (!hebOK) return null;
+  const h = hInfo(d);
+  if (h.month === "Tishri") {
+    if (h.day === 1 || h.day === 2) return "ראש השנה";
+    if (h.day === 10) return "יום כיפור";
+    if (h.day >= 15 && h.day <= 22) return h.day === 22 ? "שמחת תורה" : "סוכות";
+  }
+  if (h.month === "Nisan" && h.day >= 15 && h.day <= 21) return "פסח";
+  if (h.month === "Sivan" && h.day === 6) return "שבועות";
+  return null;
+}
+
+function writingDaysUntil(targetISO){
+  const t = atMidnight(new Date(targetISO + "T00:00:00"));
+  let d = atMidnight(new Date());
+  let count = 0, guard = 0;
+  while (d < t && guard < 1500) {
+    if (!noWriteDay(d)) count++;
+    d.setDate(d.getDate() + 1);
+    guard++;
+  }
+  return count;
+}
+
+/* ═══ derived ═══ */
+function derive(){
+  const L = st.linesPerAmud || 42;
+  const totalLines = st.history.reduce((a,h) => a + h.lines, 0);
+  const frontier = st.baseWritten + Math.floor(totalLines / L);
+  const buffer = totalLines % L;
+  const holes = st.holes.filter(h => h >= 1 && h <= frontier).sort((a,b) => a - b);
+  const remaining = Math.max(0, st.totalAmud - frontier) + holes.length;
+  const pct = Math.min(100, Math.round(((frontier - holes.length) / st.totalAmud) * 100));
+
+  const logs = {};
+  for (const h of st.history) logs[h.date] = (logs[h.date] || 0) + h.lines;
+  const todayLines = logs[todayISO()] || 0;
+
+  let streak = 0;
+  const d = new Date();
+  if (!logs[isoOf(d)]) d.setDate(d.getDate() - 1);
+  while (logs[isoOf(d)] > 0) { streak++; d.setDate(d.getDate() - 1); }
+
+  const days = []; let last7 = 0;
+  for (let i = 13; i >= 0; i--) {
+    const dd = new Date(); dd.setDate(dd.getDate() - i);
+    const lines = logs[isoOf(dd)] || 0;
+    if (i <= 6) last7 += lines;
+    days.push({ iso: isoOf(dd), lines, label: dd.getDate() });
+  }
+  const amudPerWeek = last7 / L;
+
+  let record = { lines: 0, date: null };
+  for (const dt in logs) if (logs[dt] > record.lines) record = { lines: logs[dt], date: dt };
+
+  let projection = null;
+  if (amudPerWeek > 0.05) {
+    const p = new Date();
+    p.setDate(p.getDate() + Math.round((remaining / amudPerWeek) * 7));
+    projection = p;
+  }
+
+  let lever = null;
+  if (st.targetDate) {
+    const t = new Date(st.targetDate + "T00:00:00");
+    const daysLeft = Math.ceil((atMidnight(t) - atMidnight(new Date())) / 86400000);
+    const writeDays = writingDaysUntil(st.targetDate);
+    const weeksLeft = Math.max(daysLeft / 7, 0.01);
+    lever = {
+      daysLeft,
+      writeDays,
+      neededPerWeek: remaining / weeksLeft,
+      neededLinesPerWriteDay: (remaining * L) / Math.max(writeDays, 1),
+      onTrack: amudPerWeek >= remaining / weeksLeft
+    };
+  }
+
+  let status;
+  if (todayLines >= L) status = "עמוד שלם היום. יש עדים.";
+  else if (todayLines >= st.busyQuota) status = "המכסה הקטנה הושגה — הרצף חי.";
+  else if (todayLines > 0) status = "עוד " + (st.busyQuota - todayLines) + " שורות למכסת יום עומס.";
+  else if (streak > 0) status = "רצף של " + streak + " ימים על הכף. " + st.busyQuota + " שורות שומרות עליו.";
+  else status = "אין יום אפס. גם " + st.busyQuota + " שורות זה כתיבה.";
+
+  return { L, totalLines, frontier, buffer, holes, remaining, pct, logs, todayLines, streak, days, last7, amudPerWeek, record, projection, lever, status };
+}
+
+/* ═══ toast + modals ═══ */
+let toastTimer = null;
+function toast(text, big){
+  const host = document.getElementById("toastHost");
+  host.innerHTML = '<div class="toast' + (big ? ' toastBig' : '') + '">' + esc(text) + '</div>';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => host.innerHTML = "", big ? 2600 : 1600);
+}
+
+function confirmBox(msg, onYes){
+  const host = document.getElementById("modalHost");
+  host.innerHTML =
+    '<div class="overlay" id="ovl"><div class="modal">' +
+    '<p>' + esc(msg) + '</p>' +
+    '<div class="rowGap">' +
+    '<button class="danger grow" id="mYes">כן, בצע</button>' +
+    '<button class="ghost grow" id="mNo">ביטול</button>' +
+    '</div></div></div>';
+  document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") host.innerHTML = ""; };
+  document.getElementById("mNo").onclick = () => host.innerHTML = "";
+  document.getElementById("mYes").onclick = () => { host.innerHTML = ""; onYes(); };
+}
+
+function promptBox(msg, initial, onOk){
+  const host = document.getElementById("modalHost");
+  host.innerHTML =
+    '<div class="overlay" id="ovl"><div class="modal">' +
+    '<p>' + esc(msg) + '</p>' +
+    '<input class="inp" type="number" inputmode="numeric" id="mInp" value="' + esc(initial) + '" style="margin-bottom:14px">' +
+    '<div class="rowGap">' +
+    '<button class="solid grow" id="mYes" style="padding:12px">שמור</button>' +
+    '<button class="ghost grow" id="mNo">ביטול</button>' +
+    '</div></div></div>';
+  document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") host.innerHTML = ""; };
+  document.getElementById("mNo").onclick = () => host.innerHTML = "";
+  document.getElementById("mYes").onclick = () => {
+    const v = parseInt(document.getElementById("mInp").value, 10);
+    host.innerHTML = "";
+    onOk(v);
+  };
+  setTimeout(() => document.getElementById("mInp").select(), 50);
+}
+
+/* ═══ Hebrew date picker ═══ */
+const hc = {
+  cursor: null,
+
+  open(){
+    if (!hebOK) { this.fallback(); return; }
+    this.cursor = st.targetDate ? new Date(st.targetDate + "T00:00:00") : new Date();
+    this.render();
+  },
+
+  fallback(){
+    /* very old browser without hebrew calendar support */
+    const host = document.getElementById("modalHost");
+    host.innerHTML =
+      '<div class="overlay" id="ovl"><div class="modal">' +
+      '<p>הדפדפן לא תומך בלוח עברי מובנה — בחר תאריך לועזי:</p>' +
+      '<input class="inp" type="date" id="mDate" value="' + esc(st.targetDate) + '" style="margin-bottom:14px">' +
+      '<div class="rowGap"><button class="solid grow" id="mYes" style="padding:12px">שמור</button>' +
+      '<button class="ghost grow" id="mNo">ביטול</button></div></div></div>';
+    document.getElementById("mNo").onclick = () => host.innerHTML = "";
+    document.getElementById("mYes").onclick = () => {
+      st.targetDate = document.getElementById("mDate").value;
+      host.innerHTML = ""; save(); render();
+    };
+  },
+
+  monthDays(anchor){
+    /* all gregorian dates of the hebrew month containing anchor */
+    const key = d => { const h = hInfo(d); return h.month + "|" + h.year; };
+    const target = key(anchor);
+    let first = new Date(anchor);
+    while (true) {
+      const prev = new Date(first); prev.setDate(prev.getDate() - 1);
+      if (key(prev) !== target) break;
+      first = prev;
+    }
+    const days = [];
+    let d = new Date(first);
+    while (key(d) === target && days.length < 31) {
+      days.push(new Date(d));
+      d.setDate(d.getDate() + 1);
+    }
+    return days;
+  },
+
+  render(){
+    const days = this.monthDays(this.cursor);
+    const today = atMidnight(new Date());
+    const selISO = st.targetDate;
+    const h0 = hInfo(days[0]);
+    const title = (HEB_MONTHS[h0.month] || h0.month) + " " + gYear(h0.year);
+
+    let cells = "";
+    for (let i = 0; i < days[0].getDay(); i++) cells += "<span></span>";
+    for (const d of days) {
+      const hd = hInfo(d).day;
+      const isPast = atMidnight(d) < today;
+      const isToday = atMidnight(d).getTime() === today.getTime();
+      const nw = noWriteDay(d);
+      let cls = "hcCell";
+      if (nw === "שבת") cls += " hcShab";
+      else if (nw) cls += " hcHoly";
+      if (isPast) cls += " hcPast";
+      if (isToday) cls += " hcToday";
+      if (selISO && isoOf(d) === selISO) cls += " hcSel";
+      cells += '<button class="' + cls + '" data-d="' + isoOf(d) + '"' + (isPast ? ' data-past="1"' : '') +
+        (nw ? ' title="' + esc(nw) + '"' : '') + '>' + gDay(hd) + '<small>' + d.getDate() + "." + (d.getMonth()+1) + '</small></button>';
+    }
+
+    const host = document.getElementById("modalHost");
+    host.innerHTML =
+      '<div class="overlay" id="ovl"><div class="modal">' +
+      '<div class="hcHead">' +
+      '<button class="hcNav" id="hcPrev">‹</button>' +
+      '<span class="hcTitle">' + esc(title) + '</span>' +
+      '<button class="hcNav" id="hcNext">›</button>' +
+      '</div>' +
+      '<div class="hcWeek"><span class="hcWd">א</span><span class="hcWd">ב</span><span class="hcWd">ג</span><span class="hcWd">ד</span><span class="hcWd">ה</span><span class="hcWd">ו</span><span class="hcWd">ש</span></div>' +
+      '<div class="hcGrid" id="hcGrid">' + cells + '</div>' +
+      '<div class="hcLegend">' +
+      '<span><i class="hcDot" style="background:#F3EAD4"></i>חג — אין כתיבה</span>' +
+      '<span><i class="hcDot" style="background:#EDE8DB"></i>שבת</span>' +
+      '<span><i class="hcDot" style="background:#fff;border:1px solid #A67C1B"></i>היום</span>' +
+      '</div>' +
+      (selISO ? '<button class="ghost" style="width:100%;margin-top:14px" id="hcClear">הסרת התאריך</button>' : '') +
+      '</div></div>';
+
+    document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") host.innerHTML = ""; };
+    document.getElementById("hcPrev").onclick = () => {
+      const first = this.monthDays(this.cursor)[0];
+      const prev = new Date(first); prev.setDate(prev.getDate() - 1);
+      this.cursor = prev; this.render();
+    };
+    document.getElementById("hcNext").onclick = () => {
+      const days2 = this.monthDays(this.cursor);
+      const next = new Date(days2[days2.length - 1]); next.setDate(next.getDate() + 1);
+      this.cursor = next; this.render();
+    };
+    document.getElementById("hcGrid").onclick = e => {
+      const b = e.target.closest("[data-d]");
+      if (!b) return;
+      if (b.dataset.past) { toast("התאריך כבר עבר"); return; }
+      st.targetDate = b.dataset.d;
+      host.innerHTML = "";
+      save(); render();
+      toast("היעד נקבע: " + hebStr(new Date(b.dataset.d + "T00:00:00")), true);
+    };
+    const clr = document.getElementById("hcClear");
+    if (clr) clr.onclick = () => {
+      confirmBox("להסיר את תאריך היעד?", () => { st.targetDate = ""; save(); render(); });
+      host.innerHTML = "";
+    };
+  }
+};
+
+/* ═══ app actions ═══ */
+const app = {
+  addLines(n, src){
+    n = parseInt(n, 10);
+    if (!n || n <= 0) return;
+    const before = derive().frontier;
+    const t = todayISO();
+    if (src === "sw") {
+      const ex = st.history.find(h => h.date === t && h.src === "sw");
+      if (ex) ex.lines += n;
+      else st.history.push({ id: "sw" + Date.now(), date: t, lines: n, src: "sw" });
+    } else {
+      st.history.push({ id: Date.now() + Math.random().toString(36).slice(2,6), date: t, lines: n });
+    }
+    save();
+    const D = derive();
+    if (D.frontier > before) toast("🖋️ עמוד " + D.frontier + " הושלם ונרשם במגילה", true);
+    else if (src !== "sw") toast("+" + n + " שורות · " + D.buffer + "/" + D.L + " בעמוד");
+    render();
+  },
+
+  addCustom(){
+    const el = document.getElementById("customLines");
+    this.addLines(el.value);
+    el.value = "";
+  },
+
+  completeAmud(){
+    const D = derive();
+    this.addLines(D.L - D.buffer);
+  },
+
+  undoLast(){
+    if (!st.history.length) return;
+    const last = st.history[st.history.length - 1];
+    confirmBox("לבטל את הרישום האחרון (" + last.lines + " שורות)?", () => {
+      st.history.pop(); save(); toast("בוטל"); render();
+    });
+  },
+
+  removeEntry(id){
+    const e = st.history.find(h => h.id === id);
+    if (!e) return;
+    confirmBox("למחוק רישום של " + e.lines + " שורות מ־" + heDate(e.date) + "? העמודים יחושבו מחדש.", () => {
+      st.history = st.history.filter(h => h.id !== id);
+      save(); toast("נמחק והחשבון עודכן"); render();
+    });
+  },
+
+  editEntry(id){
+    const e = st.history.find(h => h.id === id);
+    if (!e) return;
+    promptBox("עדכון מספר השורות ברישום מ־" + heDate(e.date) + ":", e.lines, v => {
+      if (!v || v <= 0) return;
+      e.lines = v; save(); toast("עודכן"); render();
+    });
+  },
+
+  tapBlock(i){
+    const D = derive();
+    const isHole = D.holes.indexOf(i) !== -1;
+    if (isHole) {
+      confirmBox("עמוד " + i + " — להשלים אותו? הוא יסומן כנכתב במקומו.", () => {
+        st.holes = st.holes.filter(x => x !== i);
+        save(); toast("🖋️ עמוד " + i + " הושלם — החור נסתם", true); render();
+      });
+    } else if (i === D.frontier && D.frontier > 0) {
+      confirmBox("עמוד " + i + " הוא האחרון שנכתב. למחוק אותו ולהחזיר את הקולמוס לעמוד " + i + "?", () => {
+        st.baseWritten = Math.max(0, st.baseWritten - 1);
+        save(); toast("הקולמוס חזר לעמוד " + i); render();
+      });
+    } else if (i < D.frontier) {
+      confirmBox("למחוק את עמוד " + i + "? הוא יסומן כמחורר — לבן וריק — במקומו המדויק. (הקולמוס נשאר בעמוד " + (D.frontier + 1) + ")", () => {
+        st.holes.push(i);
+        st.holes.sort((a,b) => a - b);
+        save(); toast("עמוד " + i + " מחורר — ממתין להשלמה"); render();
+      });
+    } else if (i === D.frontier + 1) {
+      toast("עמוד " + i + " הוא הקולמוס — כאן כותבים עכשיו");
+    } else {
+      toast("עמוד " + i + " עוד לפניך — הקולמוס בעמוד " + (D.frontier + 1));
+    }
+  },
+
+  fillFirstHole(){
+    const D = derive();
+    if (!D.holes.length) return;
+    const first = D.holes[0];
+    confirmBox("להשלים את עמוד " + first + " (החור הראשון)?", () => {
+      st.holes = st.holes.filter(x => x !== first);
+      save(); toast("🖋️ עמוד " + first + " הושלם — החור נסתם", true); render();
+    });
+  },
+
+  resetAll(){
+    confirmBox("לאפס את כל הנתונים לגמרי? זה בלתי הפיך.", () => {
+      st = JSON.parse(JSON.stringify(DEFAULTS));
+      save(); toast("אופס — מתחילים נקי"); render();
+    });
+  }
+};
+
+/* ═══ stopwatch ═══ */
+const sw = {
+  running: false, acc: 0, start: 0, lapAnchor: 0, beeped: false,
+  laps: [], interval: null, audio: null,
+
+  now(){ return this.acc + (this.running ? Date.now() - this.start : 0); },
+
+  beep(double){
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      this.audio = this.audio || new Ctx();
+      const ctx = this.audio;
+      const play = t0 => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = 880;
+        g.gain.setValueAtTime(0.25, ctx.currentTime + t0);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t0 + 0.35);
+        o.start(ctx.currentTime + t0); o.stop(ctx.currentTime + t0 + 0.4);
+      };
+      play(0);
+      if (double) play(0.45);
+    } catch(e){}
+  },
+
+  tick(){
+    const total = this.now();
+    const lapMs = total - this.lapAnchor;
+    document.getElementById("swLap").textContent = fmt(lapMs);
+    document.getElementById("swTotal").textContent = fmt(total);
+    const thMs = (st.swThresholdMin || 2) * 60000;
+    const over = lapMs > thMs;
+    document.getElementById("swMain").className = "swMain" + (over && this.running ? " swOver" : "");
+    if (over && !this.beeped && this.running) { this.beeped = true; this.beep(true); }
+  },
+
+  startPause(){
+    if (this.running) {
+      this.acc += Date.now() - this.start;
+      this.running = false;
+      clearInterval(this.interval);
+      document.getElementById("swStartBtn").textContent = "המשך";
+      document.getElementById("swStartBtn").className = "solid tall";
+    } else {
+      if (!this.audio) this.beep(false);
+      this.start = Date.now();
+      this.running = true;
+      this.interval = setInterval(() => this.tick(), 200);
+      document.getElementById("swStartBtn").textContent = "השהה";
+      document.getElementById("swStartBtn").className = "ghost tall";
+    }
+    document.getElementById("swLapBtn").disabled = false;
+    document.getElementById("swResetBtn").disabled = false;
+  },
+
+  lap(){
+    const total = this.now();
+    if (total === 0) return;
+    const dur = total - this.lapAnchor;
+    this.lapAnchor = total;
+    const over = this.beeped;
+    this.beeped = false;
+    this.laps.unshift({ n: this.laps.length + 1, ms: dur, over });
+    this.renderLaps();
+    app.addLines(1, "sw");
+    this.tick();
+  },
+
+  reset(){
+    confirmBox("לאפס את השעון? שורות שכבר נרשמו ביומן נשארות.", () => {
+      clearInterval(this.interval);
+      this.running = false; this.acc = 0; this.start = 0; this.lapAnchor = 0; this.beeped = false;
+      this.laps = [];
+      document.getElementById("swStartBtn").textContent = "התחל";
+      document.getElementById("swStartBtn").className = "solid tall";
+      document.getElementById("swLapBtn").disabled = true;
+      document.getElementById("swResetBtn").disabled = true;
+      this.tick();
+      this.renderLaps();
+    });
+  },
+
+  renderLaps(){
+    document.getElementById("lapCount").textContent = this.laps.length + " שורות";
+    const avgEl = document.getElementById("lapAvg");
+    if (this.laps.length > 1) {
+      const avg = this.laps.reduce((a,l) => a + l.ms, 0) / this.laps.length;
+      avgEl.textContent = "ממוצע " + fmt(avg) + " לשורה";
+    } else avgEl.textContent = "";
+    const list = document.getElementById("lapsList");
+    if (!this.laps.length) {
+      list.innerHTML = '<p class="hint">ההקפה הראשונה תופיע כאן — החדשה תמיד למעלה.</p>';
+      return;
+    }
+    list.innerHTML = this.laps.map(l =>
+      '<div class="histRow"><span class="histDate">שורה ' + l.n + '</span>' +
+      '<span class="histLines' + (l.over ? ' lapOver' : '') + '">' + fmt(l.ms) + '</span>' +
+      '<span class="grow"></span>' +
+      (l.over ? '<span class="lapOverTag">מעל הזמן</span>' : '') +
+      '</div>'
+    ).join("");
+  }
+};
+
+/* ═══ render ═══ */
+function render(){
+  const D = derive();
+
+  document.getElementById("pct").textContent = D.pct + "%";
+  document.getElementById("remaining").textContent = D.remaining;
+  document.getElementById("holding").textContent = D.frontier + 1;
+  document.getElementById("holesCount").textContent = D.holes.length;
+  document.getElementById("holesStat").className = "stat" + (D.holes.length ? " statGold" : "");
+  document.getElementById("streak").textContent = D.streak;
+  document.getElementById("todayLines").textContent = D.todayLines;
+  document.getElementById("statusLine").textContent = D.status;
+  document.getElementById("curAmud").textContent = D.frontier + 1;
+  document.getElementById("bufferTxt").textContent = D.buffer + "/" + D.L;
+  document.getElementById("amudFill").style.width = (D.buffer / D.L * 100) + "%";
+  document.getElementById("busyBtn").textContent = "+" + st.busyQuota;
+  document.getElementById("busyBtn").onclick = () => app.addLines(st.busyQuota);
+
+  const fh = document.getElementById("fillHoleWrap");
+  fh.innerHTML = D.holes.length
+    ? '<button class="gold" style="width:100%;margin-top:8px" onclick="app.fillFirstHole()">השלמתי את עמוד ' + D.holes[0] + ' — החור הראשון (' + D.holes.length + ' מחוררים)</button>'
+    : "";
+
+  const holeSet = new Set(D.holes);
+  let grid = "";
+  for (let i = 1; i <= st.totalAmud; i++) {
+    let cls = "blk";
+    if (holeSet.has(i)) cls += " hole";
+    else if (i <= D.frontier) cls += " done";
+    else if (i === D.frontier + 1) cls += " current";
+    grid += '<button class="' + cls + '" data-i="' + i + '" aria-label="עמוד ' + i + '"></button>';
+  }
+  document.getElementById("scrollGrid").innerHTML = grid;
+  document.getElementById("holesList").textContent = D.holes.length ? "מחוררים כרגע: עמודים " + D.holes.join(", ") : "";
+
+  /* lever */
+  const lb = document.getElementById("leverBox");
+  const note = document.getElementById("leverNote");
+  if (st.targetDate && D.lever) {
+    lb.innerHTML =
+      '<div class="leverGrid">' +
+      '<div class="stat"><b>' + D.lever.writeDays + '</b><span>ימי כתיבה נותרו (מתוך ' + D.lever.daysLeft + ' ימים)</span></div>' +
+      '<div class="stat"><b>' + Math.ceil(D.lever.neededLinesPerWriteDay) + '</b><span>שורות ליום כתיבה</span></div>' +
+      '<div class="stat"><b>' + D.lever.neededPerWeek.toFixed(1) + '</b><span>עמודים לשבוע</span></div>' +
+      '<div class="stat ' + (D.lever.onTrack ? 'statGold' : 'statRed') + '"><b>' + (D.lever.onTrack ? 'בקצב' : 'מאחור') + '</b><span>מול המציאות</span></div>' +
+      '</div>';
+    note.textContent = "בניכוי שבתות, ראש השנה, יום כיפור, סוכות עד שמחת תורה, פסח (כולל חול המועד) ושבועות.";
+  } else {
+    lb.innerHTML = '<p class="hint">תאריך ציבורי הוא הלחץ הכי בריא שיש. קבע — ואמור אותו בקול למישהו.</p>';
+    note.textContent = "";
+  }
+
+  const db = document.getElementById("dateBtn");
+  if (st.targetDate) {
+    const td = new Date(st.targetDate + "T00:00:00");
+    db.innerHTML = '<b>' + esc(hebStr(td) || heDate(st.targetDate)) + '</b><small>' +
+      td.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" }) + ' · לחיצה לשינוי</small>';
+  } else {
+    db.innerHTML = '<b>בחירת תאריך יעד</b><small>לוח שנה עברי · לחיצה לפתיחה</small>';
+  }
+
+  /* chart */
+  const maxBar = Math.max.apply(null, D.days.map(x => x.lines).concat([D.L]));
+  document.getElementById("chart").innerHTML = D.days.map(d =>
+    '<div class="barCol" title="' + d.lines + ' שורות">' +
+    '<div class="bar' + (d.lines >= D.L ? ' barGold' : '') + '" style="height:' + (d.lines / maxBar * 100) + '%"></div>' +
+    '<span class="barLbl">' + d.label + '</span></div>'
+  ).join("");
+
+  document.getElementById("paceGrid").innerHTML =
+    '<div class="stat"><b>' + D.last7 + '</b><span>שורות בשבוע</span></div>' +
+    '<div class="stat"><b>' + D.amudPerWeek.toFixed(1) + '</b><span>עמודים לשבוע</span></div>' +
+    '<div class="stat"><b>' + (D.record.lines || "—") + '</b><span>שיא יומי' + (D.record.date ? ' · ' + heDate(D.record.date) : '') + '</span></div>' +
+    '<div class="stat"><b>' + (D.projection ? esc(hebMonthYear(D.projection) || D.projection.toLocaleDateString("he-IL", {month:"short", year:"2-digit"})) : "—") + '</b><span>צפי סיום בקצב זה</span></div>';
+
+  /* history */
+  const recent = st.history.slice(-30).reverse();
+  document.getElementById("histList").innerHTML = recent.length
+    ? recent.map(h =>
+        '<div class="histRow"><span class="histDate">' + heDate(h.date) + (h.src === "sw" ? " ⏱" : "") + '</span>' +
+        '<span class="histLines">' + h.lines + ' שורות</span>' +
+        '<span class="grow"></span>' +
+        '<button class="ghost small" onclick="app.editEntry(\'' + h.id + '\')">ערוך</button>' +
+        '<button class="dangerGhost small" onclick="app.removeEntry(\'' + h.id + '\')">מחק</button>' +
+        '</div>'
+      ).join("")
+    : '<p class="hint">עוד אין רישומים. השורה הראשונה מחכה.</p>';
+  document.getElementById("histTotal").textContent =
+    "סה״כ " + D.totalLines + " שורות (" + (D.totalLines / D.L).toFixed(1) + " עמודים) מאז תחילת המעקב.";
+
+  document.getElementById("set-totalAmud").value = st.totalAmud;
+  document.getElementById("set-baseWritten").value = st.baseWritten;
+  document.getElementById("set-linesPerAmud").value = st.linesPerAmud;
+  document.getElementById("set-busyQuota").value = st.busyQuota;
+  document.getElementById("threshold").value = st.swThresholdMin;
+
+  document.getElementById("swHint").textContent =
+    "כל הקפה נרשמת מיד כשורה אמיתית ביומן. עוד " + (D.L - D.buffer) + " שורות — והעמוד נסגר במגילה אוטומטית. איפוס השעון לא מוחק שורות שכבר נרשמו.";
+}
+
+/* ═══ events ═══ */
+document.getElementById("scrollGrid").addEventListener("click", e => {
+  const b = e.target.closest("[data-i]");
+  if (b) app.tapBlock(parseInt(b.dataset.i, 10));
+});
+
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
+    t.classList.add("on");
+    ["main","sw","history","settings"].forEach(name => {
+      document.getElementById("tab-" + name).classList.toggle("hidden", name !== t.dataset.tab);
+    });
+  });
+});
+
+document.getElementById("threshold").addEventListener("change", e => { st.swThresholdMin = parseFloat(e.target.value) || 2; save(); });
+[["set-totalAmud","totalAmud"],["set-baseWritten","baseWritten"],["set-linesPerAmud","linesPerAmud"],["set-busyQuota","busyQuota"]].forEach(pair => {
+  document.getElementById(pair[0]).addEventListener("change", e => {
+    const v = parseInt(e.target.value, 10);
+    if (!isNaN(v) && v >= 0) { st[pair[1]] = v || (pair[1] === "linesPerAmud" ? 42 : v); save(); render(); }
+  });
+});
+document.getElementById("customLines").addEventListener("keydown", e => { if (e.key === "Enter") app.addCustom(); });
+
+render();
+</script>
+</body>
+</html>
