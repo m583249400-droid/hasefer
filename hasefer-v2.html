@@ -3,13 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#EDF0F1">
+<meta name="theme-color" content="#EDF0F1" id="themeColor">
 <title>הַסֵּפֶר · מעקב כתיבת סת״ם</title>
+<script>
+/* מחיל מצב תצוגה וערכת עיצוב לפני הציור הראשון — מונע הבהוב */
+(function(){
+  try {
+    var s = JSON.parse(localStorage.getItem("sefer-torah-html-v1") || "{}");
+    var r = document.documentElement;
+    if (s.theme === "light" || s.theme === "dark") r.setAttribute("data-theme", s.theme);
+    if (s.skin === "ruled") r.setAttribute("data-skin", "ruled");
+  } catch(e){}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* ═══════════ tokens · לוח מכשירים ═══════════ */
+/* ═════════════════════════════════════════════════
+   ערכה 1 · לוח מכשירים — בהיר (ברירת מחדל)
+   ═════════════════════════════════════════════════ */
 :root{
   --bg:#EDF0F1;
   --panel:#FFFFFF;
@@ -37,54 +50,122 @@
   --on-warn:#FFFFFF;
   --btn-bad:#A93A29;
   --on-bad:#FFFFFF;
+  --blk-done:#3D4A50;
+  --field:#FFFFFF;
+  --font:'Assistant',-apple-system,'Segoe UI',sans-serif;
   --shadow:0 1px 2px rgba(31,37,40,.07), 0 1px 3px rgba(31,37,40,.05);
   --shadow-lift:0 2px 4px rgba(31,37,40,.08), 0 8px 24px rgba(31,37,40,.12);
-  --field:#FFFFFF;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#12171A;
-    --panel:#1A2125;
-    --tint:#212A2E;
-    --ink:#E6ECEE;
-    --ink2:#9EAAB0;
-    --ink3:#7E8B91;
-    --line:#2A343A;
-    --line2:#242D32;
-    --line3:#3C4950;
-    --accent:#4FA8C4;
-    --accent-ink:#7CC4DA;
-    --accent-tint:#183038;
-    --good:#3FA37E;
-    --good-ink:#69C4A2;
-    --good-tint:#16302A;
-    --warn:#D19B36;
-    --warn-ink:#E0B45F;
-    --warn-tint:#332818;
-    --bad:#D4614C;
-    --bad-ink:#E88871;
-    --bad-tint:#33201C;
-    --on-accent:#0B1316;
-    --btn-warn:#D19B36;
-    --on-warn:#241A08;
-    --btn-bad:#D4614C;
-    --on-bad:#22100C;
-    --shadow:0 1px 2px rgba(0,0,0,.4);
-    --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.45);
-    --field:#141B1F;
-  }
 }
 
+/* ═════════ ערכה 2 · שרטוט — בהיר ═════════ */
+:root[data-skin="ruled"]{
+  --bg:#FAFAF7;
+  --panel:#FAFAF7;
+  --tint:#F1F2EF;
+  --ink:#1A1A18;
+  --ink2:#54564F;
+  --ink3:#7A7C74;
+  --line:#D6DBE4;
+  --line2:#E4E7EC;
+  --line3:#B4BECC;
+  --accent:#2E4A7D;
+  --accent-ink:#243C68;
+  --accent-tint:#E4E9F2;
+  --good:#2A6E4F;
+  --good-ink:#1F5A40;
+  --good-tint:#E2EDE7;
+  --warn:#8A6A12;
+  --warn-ink:#6E540E;
+  --warn-tint:#F0EBD9;
+  --bad:#B4402F;
+  --bad-ink:#93331F;
+  --bad-tint:#F5E2DE;
+  --on-accent:#FAFAF7;
+  --btn-warn:#7A5D10;
+  --on-warn:#FAFAF7;
+  --btn-bad:#A93A29;
+  --on-bad:#FAFAF7;
+  --blk-done:#1A1A18;
+  --field:#FFFFFF;
+  --font:'Heebo',-apple-system,'Segoe UI',sans-serif;
+  --shadow:none;
+  --shadow-lift:0 8px 30px rgba(26,26,24,.16);
+}
+
+/* ═════════ ערכה 1 · לוח מכשירים — כהה ═════════ */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-skin="ruled"]){
+    --bg:#12171A; --panel:#1A2125; --tint:#212A2E;
+    --ink:#E6ECEE; --ink2:#9EAAB0; --ink3:#7E8B91;
+    --line:#2A343A; --line2:#242D32; --line3:#3C4950;
+    --accent:#4FA8C4; --accent-ink:#7CC4DA; --accent-tint:#183038;
+    --good:#3FA37E; --good-ink:#69C4A2; --good-tint:#16302A;
+    --warn:#D19B36; --warn-ink:#E0B45F; --warn-tint:#332818;
+    --bad:#D4614C; --bad-ink:#E88871; --bad-tint:#33201C;
+    --on-accent:#0B1316; --btn-warn:#D19B36; --on-warn:#241A08;
+    --btn-bad:#D4614C; --on-bad:#22100C;
+    --blk-done:#8E9CA3; --field:#141B1F;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]:not([data-skin="ruled"]){
+  --bg:#12171A; --panel:#1A2125; --tint:#212A2E;
+  --ink:#E6ECEE; --ink2:#9EAAB0; --ink3:#7E8B91;
+  --line:#2A343A; --line2:#242D32; --line3:#3C4950;
+  --accent:#4FA8C4; --accent-ink:#7CC4DA; --accent-tint:#183038;
+  --good:#3FA37E; --good-ink:#69C4A2; --good-tint:#16302A;
+  --warn:#D19B36; --warn-ink:#E0B45F; --warn-tint:#332818;
+  --bad:#D4614C; --bad-ink:#E88871; --bad-tint:#33201C;
+  --on-accent:#0B1316; --btn-warn:#D19B36; --on-warn:#241A08;
+  --btn-bad:#D4614C; --on-bad:#22100C;
+  --blk-done:#8E9CA3; --field:#141B1F;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.45);
+}
+
+/* ═════════ ערכה 2 · שרטוט — כהה ═════════ */
+@media (prefers-color-scheme: dark){
+  :root[data-skin="ruled"]:not([data-theme="light"]){
+    --bg:#101214; --panel:#101214; --tint:#181B1F;
+    --ink:#E9EBED; --ink2:#A2A8AE; --ink3:#7D848B;
+    --line:#282E36; --line2:#20252B; --line3:#3B4350;
+    --accent:#7FA6DE; --accent-ink:#A2BFE9; --accent-tint:#1A2231;
+    --good:#54A57E; --good-ink:#76C29C; --good-tint:#16291F;
+    --warn:#C9A24A; --warn-ink:#DCBB6C; --warn-tint:#2A2312;
+    --bad:#D4614C; --bad-ink:#E88871; --bad-tint:#2E1B17;
+    --on-accent:#0D1218; --btn-warn:#C9A24A; --on-warn:#20190A;
+    --btn-bad:#D4614C; --on-bad:#22100C;
+    --blk-done:#E9EBED; --field:#171A1E;
+    --shadow:none;
+    --shadow-lift:0 10px 30px rgba(0,0,0,.55);
+  }
+}
+:root[data-skin="ruled"][data-theme="dark"]{
+  --bg:#101214; --panel:#101214; --tint:#181B1F;
+  --ink:#E9EBED; --ink2:#A2A8AE; --ink3:#7D848B;
+  --line:#282E36; --line2:#20252B; --line3:#3B4350;
+  --accent:#7FA6DE; --accent-ink:#A2BFE9; --accent-tint:#1A2231;
+  --good:#54A57E; --good-ink:#76C29C; --good-tint:#16291F;
+  --warn:#C9A24A; --warn-ink:#DCBB6C; --warn-tint:#2A2312;
+  --bad:#D4614C; --bad-ink:#E88871; --bad-tint:#2E1B17;
+  --on-accent:#0D1218; --btn-warn:#C9A24A; --on-warn:#20190A;
+  --btn-bad:#D4614C; --on-bad:#22100C;
+  --blk-done:#E9EBED; --field:#171A1E;
+  --shadow:none;
+  --shadow-lift:0 10px 30px rgba(0,0,0,.55);
+}
+
+/* ═══════════ בסיס ═══════════ */
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg)}
 .page{
-  min-height:100vh;color:var(--ink);
-  font-family:'Assistant',-apple-system,'Segoe UI',sans-serif;
+  min-height:100vh;color:var(--ink);font-family:var(--font);
   max-width:560px;margin:0 auto;padding:16px 14px 70px;
   font-variant-numeric:tabular-nums;
 }
 
-/* ═══════════ header ═══════════ */
+/* ═══════════ כותרת ═══════════ */
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .eyebrow{font-size:10.5px;letter-spacing:.2em;color:var(--ink3);font-weight:600;margin-bottom:1px}
 .h1{font-size:23px;line-height:1.1;font-weight:800;letter-spacing:-.015em}
@@ -97,7 +178,7 @@ body{background:var(--bg)}
 .pill.bad{background:var(--bad-tint);color:var(--bad-ink)}
 .pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
 
-/* ═══════════ tabs ═══════════ */
+/* ═══════════ טאבים ═══════════ */
 .tabs{display:flex;gap:2px;background:var(--line2);padding:3px;border-radius:9px;margin-bottom:14px}
 .tab{
   flex:1;padding:8px 0;font-family:inherit;font-size:13.5px;font-weight:600;
@@ -105,18 +186,17 @@ body{background:var(--bg)}
 }
 .tab.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
 
-/* ═══════════ panels ═══════════ */
+/* ═══════════ פאנלים ═══════════ */
 .card{background:var(--panel);border-radius:11px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
 .h2{font-size:11.5px;font-weight:700;color:var(--ink2);letter-spacing:.07em;margin-bottom:10px}
 .rowBetween{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .mono{font-size:13px;font-weight:700;color:var(--ink3)}
 
-/* hero */
 .big{font-size:58px;font-weight:800;line-height:1;letter-spacing:-.035em;display:block}
 .lbl{font-size:12.5px;color:var(--ink3);font-weight:600}
 .heroTop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
 .progRing{flex-shrink:0;text-align:center}
-.progRing svg{display:block}
+.progRing svg{display:block;font-family:var(--font)}
 .progRing span{font-size:10.5px;color:var(--ink3);font-weight:600;display:block;margin-top:2px}
 .heroStats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
 .stat{
@@ -128,25 +208,20 @@ body{background:var(--bg)}
 .statGold{border-inline-start-color:var(--warn)} .statGold b{color:var(--warn-ink)}
 .statRed{border-inline-start-color:var(--bad)} .statRed b{color:var(--bad-ink)}
 .statGood{border-inline-start-color:var(--good)} .statGood b{color:var(--good-ink)}
-.status{
-  font-size:13px;color:var(--ink2);margin-top:12px;padding-top:10px;
-  border-top:1px solid var(--line2);
-}
+.status{font-size:13px;color:var(--ink2);margin-top:12px;padding-top:10px;border-top:1px solid var(--line2)}
 
-/* progress bar */
 .amudBar{height:6px;background:var(--line2);border-radius:3px;overflow:hidden;margin:2px 0 0}
 .amudFill{height:100%;background:var(--accent);transition:width .4s;border-radius:3px}
 .hint{font-size:12px;color:var(--ink3);line-height:1.55}
 
-/* sparkline */
 .spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin:12px 0 2px;direction:rtl}
 .spark i{flex:1;background:var(--line3);border-radius:2px;display:block;min-height:2px}
 .spark i.hi{background:var(--accent)}
 .spark i.today{background:var(--accent);opacity:.55}
 .sparkLbl{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);font-weight:600}
 
-/* ═══════════ buttons ═══════════ */
-button{font-family:'Assistant',sans-serif;cursor:pointer;border-radius:8px;border:none;font-size:14px;transition:filter .12s,background .12s}
+/* ═══════════ כפתורים ═══════════ */
+button{font-family:var(--font);cursor:pointer;border-radius:8px;border:none;font-size:14px;transition:filter .12s,background .12s}
 button:active{filter:brightness(.94)}
 button:disabled{opacity:.4;cursor:default}
 .btnGrid{display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:6px;margin:12px 0 8px}
@@ -161,26 +236,35 @@ button:disabled{opacity:.4;cursor:default}
 .rowGap{display:flex;gap:6px;align-items:center}
 .grow{flex:1}
 .inp{
-  font-family:'Assistant',sans-serif;font-size:16px;border:1px solid var(--line);
+  font-family:var(--font);font-size:16px;border:1px solid var(--line);
   background:var(--field);color:var(--ink);padding:11px;border-radius:8px;width:100%;
 }
 .inp.small{width:82px;padding:8px;font-size:14px}
 .inp:focus,button:focus-visible,.blk:focus-visible,.hcCell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ═══════════ scroll grid ═══════════ */
+/* ═══════════ בורר ערכות בהגדרות ═══════════ */
+.seg{display:flex;gap:4px;background:var(--line2);padding:3px;border-radius:9px}
+.segBtn{
+  flex:1;padding:9px 4px;font-size:13px;font-weight:600;border-radius:6px;
+  background:transparent;color:var(--ink2);border:none;
+}
+.segBtn.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow);font-weight:700}
+.segBtn small{display:block;font-size:10px;font-weight:600;color:var(--ink3);margin-top:1px}
+.segBtn.on small{color:var(--accent-ink)}
+
+/* ═══════════ המגילה ═══════════ */
 .scrollGrid{display:flex;flex-wrap:wrap;gap:3px;direction:rtl}
 .blk{width:16px;height:21px;border-radius:2px;background:var(--line2);display:inline-block;padding:0;border:none}
-.blk.done{background:#3D4A50}
+.blk.done{background:var(--blk-done)}
 .blk.current{background:var(--accent);animation:pulse 1.6s ease-in-out infinite}
 .blk.hole{background:var(--panel);box-shadow:inset 0 0 0 1.5px var(--bad)}
 @keyframes pulse{50%{opacity:.4}}
-@media (prefers-color-scheme: dark){ .blk.done{background:#8E9CA3} }
 @media (prefers-reduced-motion: reduce){ .blk.current,.swOver #swLap,.hcToday{animation:none !important} }
 .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:11.5px;color:var(--ink3);font-weight:600}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .legend .blk{width:10px;height:13px}
 
-/* ═══════════ lever + chart ═══════════ */
+/* ═══════════ מנוף + גרף ═══════════ */
 .leverGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .chart{display:flex;align-items:flex-end;gap:3px;height:80px;direction:rtl;border-bottom:1px solid var(--line2);padding-bottom:3px;margin-bottom:12px}
 .barCol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
@@ -188,7 +272,7 @@ button:disabled{opacity:.4;cursor:default}
 .barGold{background:var(--accent)}
 .barLbl{font-size:9px;color:var(--ink3);margin-top:3px;font-weight:600}
 
-/* ═══════════ lists ═══════════ */
+/* ═══════════ רשימות ═══════════ */
 .histRow{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:14px}
 .histRow:last-child{border-bottom:0}
 .histDate{color:var(--ink3);min-width:60px;font-weight:600;font-size:13px}
@@ -196,12 +280,12 @@ button:disabled{opacity:.4;cursor:default}
 .lapOver{color:var(--bad-ink)}
 .lapOverTag{font-size:10.5px;color:var(--bad-ink);background:var(--bad-tint);border-radius:20px;padding:2px 8px;font-weight:700}
 
-/* ═══════════ settings ═══════════ */
+/* ═══════════ הגדרות ═══════════ */
 .setGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink3);font-weight:600}
 .footer{text-align:center;font-size:11.5px;color:var(--ink3);margin-top:8px;font-weight:600}
 
-/* ═══════════ toast + modal ═══════════ */
+/* ═══════════ טוסט + מודאל ═══════════ */
 .toast{
   position:fixed;bottom:22px;right:50%;transform:translateX(50%);
   background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:9px;
@@ -210,10 +294,10 @@ button:disabled{opacity:.4;cursor:default}
 .toastBig{background:var(--accent);color:var(--on-accent);font-size:15.5px;padding:15px 24px}
 @keyframes rise{from{opacity:0;transform:translateX(50%) translateY(10px)}}
 .overlay{position:fixed;inset:0;background:rgba(15,20,22,.5);display:grid;place-items:center;z-index:60;padding:20px}
-.modal{background:var(--panel);border-radius:13px;padding:20px;max-width:380px;width:100%;box-shadow:var(--shadow-lift)}
+.modal{background:var(--panel);border-radius:13px;padding:20px;max-width:380px;width:100%;box-shadow:var(--shadow-lift);border:1px solid var(--line)}
 .modal p{font-size:15px;line-height:1.6;margin-bottom:16px;color:var(--ink)}
 
-/* ═══════════ stopwatch ═══════════ */
+/* ═══════════ שעון עצר ═══════════ */
 .swCard{border:1px solid var(--accent-tint)}
 .swMain{text-align:center;padding:16px 0 8px}
 #swLap{font-size:60px;line-height:1;font-weight:800;letter-spacing:-.035em}
@@ -221,7 +305,7 @@ button:disabled{opacity:.4;cursor:default}
 .swOver #swLap{color:var(--bad-ink);animation:pulse 1s ease-in-out infinite}
 .hidden{display:none}
 
-/* ═══════════ hebrew calendar ═══════════ */
+/* ═══════════ לוח שנה עברי ═══════════ */
 .dateBtn{width:100%;background:var(--tint);border:1px solid var(--line);padding:12px;border-radius:9px;text-align:right;font-size:15px;color:var(--ink)}
 .dateBtn b{font-weight:700}
 .dateBtn small{color:var(--ink3);display:block;font-size:11.5px;margin-top:2px;font-weight:600}
@@ -242,6 +326,66 @@ button:disabled{opacity:.4;cursor:default}
 .hcToday{border-color:var(--accent)}
 .hcLegend{display:flex;gap:12px;margin-top:12px;font-size:11px;color:var(--ink3);flex-wrap:wrap;font-weight:600}
 .hcDot{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-left:3px}
+
+/* ═════════════════════════════════════════════════
+   ערכה 2 · שרטוט — שינויי מבנה
+   קווים במקום קופסאות, פינות חדות, מספרים דקים
+   ═════════════════════════════════════════════════ */
+:root[data-skin="ruled"] .card{
+  background:transparent;box-shadow:none;border-radius:0;
+  border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:0;
+}
+:root[data-skin="ruled"] .card:last-of-type{border-bottom:0}
+:root[data-skin="ruled"] .swCard{border:0;border-bottom:1px solid var(--line)}
+:root[data-skin="ruled"] .header{border-bottom:1.5px solid var(--ink);padding-bottom:10px;align-items:flex-end}
+:root[data-skin="ruled"] .h1{font-weight:900;font-size:26px;letter-spacing:-.03em}
+:root[data-skin="ruled"] .pill{
+  border-radius:2px;background:transparent;border:1px solid currentColor;
+  color:var(--ink2);padding:5px 10px;
+}
+:root[data-skin="ruled"] .pill.good{background:transparent;color:var(--good-ink)}
+:root[data-skin="ruled"] .pill.bad{background:transparent;color:var(--bad-ink)}
+:root[data-skin="ruled"] .tabs{
+  background:transparent;padding:0;border-radius:0;gap:0;
+  border-bottom:1px solid var(--line);margin-bottom:6px;
+}
+:root[data-skin="ruled"] .tab{
+  border-radius:0;font-weight:400;border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 0;
+}
+:root[data-skin="ruled"] .tab.on{background:transparent;box-shadow:none;font-weight:700;border-bottom-color:var(--accent)}
+:root[data-skin="ruled"] .big{font-weight:300;font-size:74px;letter-spacing:-.05em}
+:root[data-skin="ruled"] .h2{letter-spacing:.2em;font-size:10px;color:var(--ink3)}
+:root[data-skin="ruled"] .stat{
+  background:transparent;border-radius:0;border-inline-start:0;
+  border-top:1px solid var(--line2);padding:8px 0;
+}
+:root[data-skin="ruled"] .stat b{font-weight:500}
+:root[data-skin="ruled"] .statGold{border-top-color:var(--warn)}
+:root[data-skin="ruled"] .statRed{border-top-color:var(--bad)}
+:root[data-skin="ruled"] .statGood{border-top-color:var(--good)}
+:root[data-skin="ruled"] .heroStats{gap:0 14px}
+:root[data-skin="ruled"] .amudBar{height:3px;border-radius:0}
+:root[data-skin="ruled"] .amudFill{border-radius:0}
+:root[data-skin="ruled"] .spark i,
+:root[data-skin="ruled"] .bar{border-radius:0}
+:root[data-skin="ruled"] button{border-radius:2px}
+:root[data-skin="ruled"] .solid{background:var(--ink);color:var(--bg)}
+:root[data-skin="ruled"] .ghost{background:transparent;border:1px solid var(--ink);color:var(--ink)}
+:root[data-skin="ruled"] .accentSoft{background:transparent;border:1px solid var(--accent);color:var(--accent-ink)}
+:root[data-skin="ruled"] .inp,
+:root[data-skin="ruled"] .dateBtn,
+:root[data-skin="ruled"] .hcNav{border-radius:2px}
+:root[data-skin="ruled"] .dateBtn{background:transparent}
+:root[data-skin="ruled"] .blk{border-radius:0}
+:root[data-skin="ruled"] .blk.hole{background:var(--field)}
+:root[data-skin="ruled"] .seg{background:transparent;padding:0;gap:6px;border-radius:0}
+:root[data-skin="ruled"] .segBtn{border:1px solid var(--line);border-radius:2px;background:transparent}
+:root[data-skin="ruled"] .segBtn.on{background:var(--ink);color:var(--bg);box-shadow:none;border-color:var(--ink)}
+:root[data-skin="ruled"] .segBtn.on small{color:var(--bg);opacity:.7}
+:root[data-skin="ruled"] .modal{border-radius:2px;border:1px solid var(--ink)}
+:root[data-skin="ruled"] .toast{border-radius:2px}
+:root[data-skin="ruled"] .hcCell{border-radius:0}
+:root[data-skin="ruled"] .lapOverTag{border-radius:2px;background:transparent;border:1px solid var(--bad)}
 </style>
 </head>
 <body>
@@ -372,7 +516,24 @@ button:disabled{opacity:.4;cursor:default}
 
   <div id="tab-settings" class="hidden">
     <section class="card">
-      <h2 class="h2">הגדרות</h2>
+      <h2 class="h2">מראה</h2>
+      <div class="field" style="margin-bottom:14px">מצב תצוגה
+        <div class="seg" id="themeSeg">
+          <button class="segBtn" data-theme-opt="auto">אוטומטי<small>לפי הטלפון</small></button>
+          <button class="segBtn" data-theme-opt="light">בהיר</button>
+          <button class="segBtn" data-theme-opt="dark">כהה</button>
+        </div>
+      </div>
+      <div class="field">ערכת עיצוב
+        <div class="seg" id="skinSeg">
+          <button class="segBtn" data-skin-opt="panel">לוח מכשירים<small>פאנלים · צבע = מצב</small></button>
+          <button class="segBtn" data-skin-opt="ruled">שרטוט<small>קווים · מינימלי</small></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">הספר</h2>
       <div class="setGrid">
         <label class="field">סה״כ עמודים בספר<input class="inp" type="number" inputmode="numeric" id="set-totalAmud"></label>
         <label class="field">נקודת פתיחה — עמודים שנכתבו<input class="inp" type="number" inputmode="numeric" id="set-baseWritten"></label>
@@ -403,6 +564,8 @@ const DEFAULTS = {
   linesPerAmud: 42,
   busyQuota: 10,
   swThresholdMin: 2,
+  theme: "auto",
+  skin: "panel",
   history: []
 };
 
@@ -932,9 +1095,57 @@ const sw = {
   }
 };
 
+/* ═══ מראה — מצב תצוגה + ערכת עיצוב ═══ */
+const THEME_COLORS = {
+  "panel-light":"#EDF0F1", "panel-dark":"#12171A",
+  "ruled-light":"#FAFAF7", "ruled-dark":"#101214"
+};
+
+function applyLook(){
+  const r = document.documentElement;
+  if (st.theme === "light" || st.theme === "dark") r.setAttribute("data-theme", st.theme);
+  else r.removeAttribute("data-theme");
+  if (st.skin === "ruled") r.setAttribute("data-skin", "ruled");
+  else r.removeAttribute("data-skin");
+
+  const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = st.theme === "dark" || (st.theme === "auto" && sysDark);
+  const meta = document.getElementById("themeColor");
+  if (meta) meta.setAttribute("content", THEME_COLORS[(st.skin === "ruled" ? "ruled" : "panel") + (dark ? "-dark" : "-light")]);
+
+  document.querySelectorAll("[data-theme-opt]").forEach(b =>
+    b.classList.toggle("on", b.dataset.themeOpt === st.theme));
+  document.querySelectorAll("[data-skin-opt]").forEach(b =>
+    b.classList.toggle("on", b.dataset.skinOpt === st.skin));
+}
+
+document.getElementById("themeSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-theme-opt]");
+  if (!b) return;
+  st.theme = b.dataset.themeOpt;
+  save(); applyLook();
+  toast(st.theme === "auto" ? "מצב תצוגה: לפי הטלפון" : (st.theme === "dark" ? "מצב כהה" : "מצב בהיר"));
+});
+
+document.getElementById("skinSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-skin-opt]");
+  if (!b) return;
+  st.skin = b.dataset.skinOpt;
+  save(); applyLook();
+  toast(st.skin === "ruled" ? "ערכת עיצוב: שרטוט" : "ערכת עיצוב: לוח מכשירים");
+});
+
+if (window.matchMedia) {
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onChange = () => { if (st.theme === "auto") applyLook(); };
+  if (mq.addEventListener) mq.addEventListener("change", onChange);
+  else if (mq.addListener) mq.addListener(onChange);
+}
+
 /* ═══ render ═══ */
 function render(){
   const D = derive();
+  applyLook();
 
   /* מצב עליון — צבע = מידע */
   const pill = document.getElementById("statePill");
@@ -954,7 +1165,7 @@ function render(){
     '<circle cx="30" cy="30" r="' + RR + '" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"' +
     ' stroke-dasharray="' + CC.toFixed(1) + '" stroke-dashoffset="' + (CC * (1 - D.pct / 100)).toFixed(1) + '"' +
     ' transform="rotate(-90 30 30)"/>' +
-    '<text x="30" y="30" text-anchor="middle" dominant-baseline="central" font-family="Assistant, sans-serif"' +
+    '<text x="30" y="30" text-anchor="middle" dominant-baseline="central"' +
     ' font-size="15" font-weight="700" fill="var(--ink)">' + D.pct + '%</text></svg><span>מהספר</span>';
   document.getElementById("remaining").textContent = D.remaining;
   document.getElementById("remainingLbl").textContent = "עמודים עד הסיום" +
