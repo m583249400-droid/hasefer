@@ -2,17 +2,25 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EDF0F1" id="themeColor">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="הספר">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
 <title>הַסֵּפֶר · מעקב כתיבת סת״ם</title>
 <script>
 /* מחיל מצב תצוגה וערכת עיצוב לפני הציור הראשון — מונע הבהוב */
 (function(){
   try {
-    var s = JSON.parse(localStorage.getItem("sefer-torah-html-v1") || "{}");
+    var raw = localStorage.getItem("sefer-v2") || localStorage.getItem("sefer-torah-html-v1") || "{}";
+    var s = JSON.parse(raw);
+    var g = s.settings || s;
     var r = document.documentElement;
-    if (s.theme === "light" || s.theme === "dark") r.setAttribute("data-theme", s.theme);
-    if (s.skin === "ruled") r.setAttribute("data-skin", "ruled");
+    if (g.theme === "light" || g.theme === "dark") r.setAttribute("data-theme", g.theme);
+    if (g.skin === "ruled") r.setAttribute("data-skin", "ruled");
   } catch(e){}
 })();
 </script>
@@ -20,38 +28,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* ═════════════════════════════════════════════════
-   ערכה 1 · לוח מכשירים — בהיר (ברירת מחדל)
-   ═════════════════════════════════════════════════ */
+/* ═════════ ערכה 1 · לוח מכשירים — בהיר (ברירת מחדל) ═════════ */
 :root{
-  --bg:#EDF0F1;
-  --panel:#FFFFFF;
-  --tint:#F4F7F8;
-  --ink:#1F2528;
-  --ink2:#5D686E;
-  --ink3:#78838A;
-  --line:#DFE5E8;
-  --line2:#E3E9EC;
-  --line3:#C3CDD2;
-  --accent:#12667F;
-  --accent-ink:#0E5468;
-  --accent-tint:#DCEAEF;
-  --good:#2A8464;
-  --good-ink:#1E6A52;
-  --good-tint:#DCEEE6;
-  --warn:#C08319;
-  --warn-ink:#8C5E0F;
-  --warn-tint:#F7EBD3;
-  --bad:#B4402F;
-  --bad-ink:#93331F;
-  --bad-tint:#F8E3DF;
-  --on-accent:#FFFFFF;
-  --btn-warn:#9C6A12;
-  --on-warn:#FFFFFF;
-  --btn-bad:#A93A29;
-  --on-bad:#FFFFFF;
-  --blk-done:#3D4A50;
-  --field:#FFFFFF;
+  --bg:#EDF0F1; --panel:#FFFFFF; --tint:#F4F7F8;
+  --ink:#1F2528; --ink2:#5D686E; --ink3:#78838A;
+  --line:#DFE5E8; --line2:#E3E9EC; --line3:#C3CDD2;
+  --accent:#12667F; --accent-ink:#0E5468; --accent-tint:#DCEAEF;
+  --good:#2A8464; --good-ink:#1E6A52; --good-tint:#DCEEE6;
+  --warn:#C08319; --warn-ink:#8C5E0F; --warn-tint:#F7EBD3;
+  --bad:#B4402F; --bad-ink:#93331F; --bad-tint:#F8E3DF;
+  --on-accent:#FFFFFF; --btn-warn:#9C6A12; --on-warn:#FFFFFF;
+  --btn-bad:#A93A29; --on-bad:#FFFFFF;
+  --blk-done:#3D4A50; --field:#FFFFFF;
+  --heat0:#E7ECEE; --heat1:#BFDDE6; --heat2:#7FBBCC; --heat3:#3E92AE; --heat4:#12667F;
   --font:'Assistant',-apple-system,'Segoe UI',sans-serif;
   --shadow:0 1px 2px rgba(31,37,40,.07), 0 1px 3px rgba(31,37,40,.05);
   --shadow-lift:0 2px 4px rgba(31,37,40,.08), 0 8px 24px rgba(31,37,40,.12);
@@ -59,40 +48,22 @@
 
 /* ═════════ ערכה 2 · שרטוט — בהיר ═════════ */
 :root[data-skin="ruled"]{
-  --bg:#FAFAF7;
-  --panel:#FAFAF7;
-  --tint:#F1F2EF;
-  --ink:#1A1A18;
-  --ink2:#54564F;
-  --ink3:#7A7C74;
-  --line:#D6DBE4;
-  --line2:#E4E7EC;
-  --line3:#B4BECC;
-  --accent:#2E4A7D;
-  --accent-ink:#243C68;
-  --accent-tint:#E4E9F2;
-  --good:#2A6E4F;
-  --good-ink:#1F5A40;
-  --good-tint:#E2EDE7;
-  --warn:#8A6A12;
-  --warn-ink:#6E540E;
-  --warn-tint:#F0EBD9;
-  --bad:#B4402F;
-  --bad-ink:#93331F;
-  --bad-tint:#F5E2DE;
-  --on-accent:#FAFAF7;
-  --btn-warn:#7A5D10;
-  --on-warn:#FAFAF7;
-  --btn-bad:#A93A29;
-  --on-bad:#FAFAF7;
-  --blk-done:#1A1A18;
-  --field:#FFFFFF;
+  --bg:#FAFAF7; --panel:#FAFAF7; --tint:#F1F2EF;
+  --ink:#1A1A18; --ink2:#54564F; --ink3:#7A7C74;
+  --line:#D6DBE4; --line2:#E4E7EC; --line3:#B4BECC;
+  --accent:#2E4A7D; --accent-ink:#243C68; --accent-tint:#E4E9F2;
+  --good:#2A6E4F; --good-ink:#1F5A40; --good-tint:#E2EDE7;
+  --warn:#8A6A12; --warn-ink:#6E540E; --warn-tint:#F0EBD9;
+  --bad:#B4402F; --bad-ink:#93331F; --bad-tint:#F5E2DE;
+  --on-accent:#FAFAF7; --btn-warn:#7A5D10; --on-warn:#FAFAF7;
+  --btn-bad:#A93A29; --on-bad:#FAFAF7;
+  --blk-done:#1A1A18; --field:#FFFFFF;
+  --heat0:#E9EBEF; --heat1:#C4CEE1; --heat2:#93A6C9; --heat3:#5C77A9; --heat4:#2E4A7D;
   --font:'Heebo',-apple-system,'Segoe UI',sans-serif;
-  --shadow:none;
-  --shadow-lift:0 8px 30px rgba(26,26,24,.16);
+  --shadow:none; --shadow-lift:0 8px 30px rgba(26,26,24,.16);
 }
 
-/* ═════════ ערכה 1 · לוח מכשירים — כהה ═════════ */
+/* ═════════ ערכה 1 — כהה ═════════ */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]):not([data-skin="ruled"]){
     --bg:#12171A; --panel:#1A2125; --tint:#212A2E;
@@ -105,6 +76,7 @@
     --on-accent:#0B1316; --btn-warn:#D19B36; --on-warn:#241A08;
     --btn-bad:#D4614C; --on-bad:#22100C;
     --blk-done:#8E9CA3; --field:#141B1F;
+    --heat0:#1E272C; --heat1:#1F4753; --heat2:#2A6C81; --heat3:#3B90AC; --heat4:#4FA8C4;
     --shadow:0 1px 2px rgba(0,0,0,.4);
     --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.45);
   }
@@ -120,11 +92,12 @@
   --on-accent:#0B1316; --btn-warn:#D19B36; --on-warn:#241A08;
   --btn-bad:#D4614C; --on-bad:#22100C;
   --blk-done:#8E9CA3; --field:#141B1F;
+  --heat0:#1E272C; --heat1:#1F4753; --heat2:#2A6C81; --heat3:#3B90AC; --heat4:#4FA8C4;
   --shadow:0 1px 2px rgba(0,0,0,.4);
   --shadow-lift:0 2px 6px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.45);
 }
 
-/* ═════════ ערכה 2 · שרטוט — כהה ═════════ */
+/* ═════════ ערכה 2 — כהה ═════════ */
 @media (prefers-color-scheme: dark){
   :root[data-skin="ruled"]:not([data-theme="light"]){
     --bg:#101214; --panel:#101214; --tint:#181B1F;
@@ -137,8 +110,8 @@
     --on-accent:#0D1218; --btn-warn:#C9A24A; --on-warn:#20190A;
     --btn-bad:#D4614C; --on-bad:#22100C;
     --blk-done:#E9EBED; --field:#171A1E;
-    --shadow:none;
-    --shadow-lift:0 10px 30px rgba(0,0,0,.55);
+    --heat0:#1B1F26; --heat1:#293651; --heat2:#3E5680; --heat3:#5E7DB0; --heat4:#7FA6DE;
+    --shadow:none; --shadow-lift:0 10px 30px rgba(0,0,0,.55);
   }
 }
 :root[data-skin="ruled"][data-theme="dark"]{
@@ -152,8 +125,8 @@
   --on-accent:#0D1218; --btn-warn:#C9A24A; --on-warn:#20190A;
   --btn-bad:#D4614C; --on-bad:#22100C;
   --blk-done:#E9EBED; --field:#171A1E;
-  --shadow:none;
-  --shadow-lift:0 10px 30px rgba(0,0,0,.55);
+  --heat0:#1B1F26; --heat1:#293651; --heat2:#3E5680; --heat3:#5E7DB0; --heat4:#7FA6DE;
+  --shadow:none; --shadow-lift:0 10px 30px rgba(0,0,0,.55);
 }
 
 /* ═══════════ בסיס ═══════════ */
@@ -161,14 +134,20 @@
 body{background:var(--bg)}
 .page{
   min-height:100vh;color:var(--ink);font-family:var(--font);
-  max-width:560px;margin:0 auto;padding:16px 14px 70px;
+  max-width:560px;margin:0 auto;
+  padding:calc(14px + env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));
   font-variant-numeric:tabular-nums;
 }
 
 /* ═══════════ כותרת ═══════════ */
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
 .eyebrow{font-size:10.5px;letter-spacing:.2em;color:var(--ink3);font-weight:600;margin-bottom:1px}
 .h1{font-size:23px;line-height:1.1;font-weight:800;letter-spacing:-.015em}
+.projBtn{
+  background:transparent;border:none;padding:0;text-align:right;color:var(--ink);
+  font-family:inherit;display:block;cursor:pointer;
+}
+.projBtn .eyebrow::after{content:" ▾";letter-spacing:0}
 .pill{
   display:inline-flex;align-items:center;gap:6px;
   font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:20px;
@@ -176,7 +155,18 @@ body{background:var(--bg)}
 }
 .pill.good{background:var(--good-tint);color:var(--good-ink)}
 .pill.bad{background:var(--bad-tint);color:var(--bad-ink)}
-.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block;flex-shrink:0}
+
+/* ═══════════ באנר ═══════════ */
+.banner{
+  display:flex;align-items:center;gap:10px;background:var(--warn-tint);color:var(--warn-ink);
+  padding:10px 12px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:10px;
+}
+.banner button{
+  margin-inline-start:auto;background:transparent;border:1px solid currentColor;color:inherit;
+  font-size:12px;font-weight:700;padding:5px 10px;flex-shrink:0;
+}
+.banner.info{background:var(--accent-tint);color:var(--accent-ink)}
 
 /* ═══════════ טאבים ═══════════ */
 .tabs{display:flex;gap:2px;background:var(--line2);padding:3px;border-radius:9px;margin-bottom:14px}
@@ -233,16 +223,18 @@ button:disabled{opacity:.4;cursor:default}
 .danger{background:var(--btn-bad);color:var(--on-bad);padding:11px 16px;font-weight:700}
 .dangerGhost{background:transparent;color:var(--bad-ink);border:1px solid var(--bad);font-weight:600}
 .small{padding:6px 11px;font-size:12.5px}
+.wide{width:100%}
 .rowGap{display:flex;gap:6px;align-items:center}
+.rowWrap{display:flex;gap:6px;flex-wrap:wrap}
 .grow{flex:1}
-.inp{
+.inp,select.inp{
   font-family:var(--font);font-size:16px;border:1px solid var(--line);
   background:var(--field);color:var(--ink);padding:11px;border-radius:8px;width:100%;
 }
 .inp.small{width:82px;padding:8px;font-size:14px}
 .inp:focus,button:focus-visible,.blk:focus-visible,.hcCell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ═══════════ בורר ערכות בהגדרות ═══════════ */
+/* ═══════════ בוררים ═══════════ */
 .seg{display:flex;gap:4px;background:var(--line2);padding:3px;border-radius:9px}
 .segBtn{
   flex:1;padding:9px 4px;font-size:13px;font-weight:600;border-radius:6px;
@@ -254,15 +246,37 @@ button:disabled{opacity:.4;cursor:default}
 
 /* ═══════════ המגילה ═══════════ */
 .scrollGrid{display:flex;flex-wrap:wrap;gap:3px;direction:rtl}
-.blk{width:16px;height:21px;border-radius:2px;background:var(--line2);display:inline-block;padding:0;border:none}
+.yeria{display:flex;gap:2px;flex-direction:column;align-items:center}
+.yeriaBlocks{display:flex;gap:2px}
+.yeriaNum{font-size:8px;color:var(--ink3);font-weight:600;line-height:1}
+.blk{
+  width:16px;height:21px;border-radius:2px;background:var(--line2);
+  display:inline-block;padding:0;border:none;position:relative;
+}
 .blk.done{background:var(--blk-done)}
 .blk.current{background:var(--accent);animation:pulse 1.6s ease-in-out infinite}
 .blk.hole{background:var(--panel);box-shadow:inset 0 0 0 1.5px var(--bad)}
+.blk[data-st="1"],.blk[data-st="2"]{box-shadow:inset 0 -4px 0 var(--warn)}
+.blk[data-st="3"]{box-shadow:inset 0 -4px 0 var(--good)}
 @keyframes pulse{50%{opacity:.4}}
 @media (prefers-reduced-motion: reduce){ .blk.current,.swOver #swLap,.hcToday{animation:none !important} }
 .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:11.5px;color:var(--ink3);font-weight:600}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .legend .blk{width:10px;height:13px}
+
+/* ═══════════ heatmap ═══════════ */
+.heatWrap{padding-bottom:4px}
+/* העמודות נמתחות לרוחב הכרטיס — שנה שלמה נכנסת בלי גלילה */
+.heat{display:flex;gap:1px;direction:rtl;width:100%}
+.heatCol{display:flex;flex-direction:column;gap:1px;flex:1 1 0;min-width:0}
+.heatCell{width:100%;aspect-ratio:1;border-radius:1px;background:var(--heat0)}
+.heatCell[data-l="1"]{background:var(--heat1)}
+.heatCell[data-l="2"]{background:var(--heat2)}
+.heatCell[data-l="3"]{background:var(--heat3)}
+.heatCell[data-l="4"]{background:var(--heat4)}
+.heatCell.off{background:transparent}
+.heatKey{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:11px;color:var(--ink3);font-weight:600}
+.heatKey i{width:10px;height:10px;border-radius:2px;display:block;flex-shrink:0}
 
 /* ═══════════ מנוף + גרף ═══════════ */
 .leverGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -284,18 +298,50 @@ button:disabled{opacity:.4;cursor:default}
 .setGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink3);font-weight:600}
 .footer{text-align:center;font-size:11.5px;color:var(--ink3);margin-top:8px;font-weight:600}
+.syncRow{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink2);margin-bottom:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line3);flex-shrink:0}
+.dot.ok{background:var(--good)} .dot.err{background:var(--bad)} .dot.busy{background:var(--warn);animation:pulse 1s infinite}
+.switchRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.switchRow:last-child{border-bottom:0}
+.switchRow p{font-size:13.5px;font-weight:600;margin:0}
+.switchRow small{display:block;font-size:11.5px;color:var(--ink3);font-weight:600;margin-top:1px}
+.sw2{
+  width:46px;height:27px;border-radius:14px;background:var(--line3);position:relative;
+  flex-shrink:0;border:none;padding:0;transition:background .18s;
+}
+.sw2::after{
+  content:"";position:absolute;top:3px;inset-inline-end:3px;width:21px;height:21px;
+  border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 2px rgba(0,0,0,.25);
+}
+.sw2.on{background:var(--accent)}
+.sw2.on::after{transform:translateX(19px)}
 
 /* ═══════════ טוסט + מודאל ═══════════ */
 .toast{
   position:fixed;bottom:22px;right:50%;transform:translateX(50%);
   background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:9px;
-  font-size:14px;font-weight:600;z-index:50;animation:rise .22s ease-out;box-shadow:var(--shadow-lift);
+  font-size:14px;font-weight:600;z-index:80;animation:rise .22s ease-out;box-shadow:var(--shadow-lift);
+  max-width:90vw;text-align:center;
 }
 .toastBig{background:var(--accent);color:var(--on-accent);font-size:15.5px;padding:15px 24px}
 @keyframes rise{from{opacity:0;transform:translateX(50%) translateY(10px)}}
-.overlay{position:fixed;inset:0;background:rgba(15,20,22,.5);display:grid;place-items:center;z-index:60;padding:20px}
-.modal{background:var(--panel);border-radius:13px;padding:20px;max-width:380px;width:100%;box-shadow:var(--shadow-lift);border:1px solid var(--line)}
+.overlay{position:fixed;inset:0;background:rgba(15,20,22,.5);display:grid;place-items:center;z-index:60;padding:16px}
+.modal{
+  background:var(--panel);border-radius:13px;padding:20px;max-width:400px;width:100%;
+  box-shadow:var(--shadow-lift);border:1px solid var(--line);max-height:90vh;overflow-y:auto;
+}
 .modal p{font-size:15px;line-height:1.6;margin-bottom:16px;color:var(--ink)}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:12px}
+.modalList{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.modalItem{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+  background:var(--tint);border:1px solid var(--line);border-radius:9px;padding:11px 12px;
+  font-size:14.5px;font-weight:600;color:var(--ink);
+}
+.modalItem.on{border-color:var(--accent);background:var(--accent-tint);color:var(--accent-ink)}
+.modalItem small{display:block;font-size:11.5px;color:var(--ink3);font-weight:600;margin-top:1px}
+.modalItem.on small{color:var(--accent-ink);opacity:.8}
+.modalItem .tick{margin-inline-start:auto;font-weight:700}
 
 /* ═══════════ שעון עצר ═══════════ */
 .swCard{border:1px solid var(--accent-tint)}
@@ -304,6 +350,11 @@ button:disabled{opacity:.4;cursor:default}
 .swSub{font-size:12.5px;color:var(--ink3);margin-top:4px;font-weight:600}
 .swOver #swLap{color:var(--bad-ink);animation:pulse 1s ease-in-out infinite}
 .hidden{display:none}
+.hourGrid{display:flex;align-items:flex-end;gap:2px;height:56px;direction:rtl;margin-top:6px}
+.hourCol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.hourBar{width:100%;background:var(--line3);border-radius:2px 2px 0 0;min-height:2px}
+.hourBar.best{background:var(--accent)}
+.hourLbl{font-size:8px;color:var(--ink3);margin-top:2px;font-weight:600}
 
 /* ═══════════ לוח שנה עברי ═══════════ */
 .dateBtn{width:100%;background:var(--tint);border:1px solid var(--line);padding:12px;border-radius:9px;text-align:right;font-size:15px;color:var(--ink)}
@@ -327,10 +378,7 @@ button:disabled{opacity:.4;cursor:default}
 .hcLegend{display:flex;gap:12px;margin-top:12px;font-size:11px;color:var(--ink3);flex-wrap:wrap;font-weight:600}
 .hcDot{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-left:3px}
 
-/* ═════════════════════════════════════════════════
-   ערכה 2 · שרטוט — שינויי מבנה
-   קווים במקום קופסאות, פינות חדות, מספרים דקים
-   ═════════════════════════════════════════════════ */
+/* ═════════ ערכה 2 · שרטוט — שינויי מבנה ═════════ */
 :root[data-skin="ruled"] .card{
   background:transparent;box-shadow:none;border-radius:0;
   border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:0;
@@ -339,26 +387,15 @@ button:disabled{opacity:.4;cursor:default}
 :root[data-skin="ruled"] .swCard{border:0;border-bottom:1px solid var(--line)}
 :root[data-skin="ruled"] .header{border-bottom:1.5px solid var(--ink);padding-bottom:10px;align-items:flex-end}
 :root[data-skin="ruled"] .h1{font-weight:900;font-size:26px;letter-spacing:-.03em}
-:root[data-skin="ruled"] .pill{
-  border-radius:2px;background:transparent;border:1px solid currentColor;
-  color:var(--ink2);padding:5px 10px;
-}
+:root[data-skin="ruled"] .pill{border-radius:2px;background:transparent;border:1px solid currentColor;color:var(--ink2);padding:5px 10px}
 :root[data-skin="ruled"] .pill.good{background:transparent;color:var(--good-ink)}
 :root[data-skin="ruled"] .pill.bad{background:transparent;color:var(--bad-ink)}
-:root[data-skin="ruled"] .tabs{
-  background:transparent;padding:0;border-radius:0;gap:0;
-  border-bottom:1px solid var(--line);margin-bottom:6px;
-}
-:root[data-skin="ruled"] .tab{
-  border-radius:0;font-weight:400;border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 0;
-}
+:root[data-skin="ruled"] .tabs{background:transparent;padding:0;border-radius:0;gap:0;border-bottom:1px solid var(--line);margin-bottom:6px}
+:root[data-skin="ruled"] .tab{border-radius:0;font-weight:400;border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 0}
 :root[data-skin="ruled"] .tab.on{background:transparent;box-shadow:none;font-weight:700;border-bottom-color:var(--accent)}
 :root[data-skin="ruled"] .big{font-weight:300;font-size:74px;letter-spacing:-.05em}
 :root[data-skin="ruled"] .h2{letter-spacing:.2em;font-size:10px;color:var(--ink3)}
-:root[data-skin="ruled"] .stat{
-  background:transparent;border-radius:0;border-inline-start:0;
-  border-top:1px solid var(--line2);padding:8px 0;
-}
+:root[data-skin="ruled"] .stat{background:transparent;border-radius:0;border-inline-start:0;border-top:1px solid var(--line2);padding:8px 0}
 :root[data-skin="ruled"] .stat b{font-weight:500}
 :root[data-skin="ruled"] .statGold{border-top-color:var(--warn)}
 :root[data-skin="ruled"] .statRed{border-top-color:var(--bad)}
@@ -367,14 +404,18 @@ button:disabled{opacity:.4;cursor:default}
 :root[data-skin="ruled"] .amudBar{height:3px;border-radius:0}
 :root[data-skin="ruled"] .amudFill{border-radius:0}
 :root[data-skin="ruled"] .spark i,
-:root[data-skin="ruled"] .bar{border-radius:0}
+:root[data-skin="ruled"] .bar,
+:root[data-skin="ruled"] .heatCell,
+:root[data-skin="ruled"] .heatKey i{border-radius:0}
 :root[data-skin="ruled"] button{border-radius:2px}
 :root[data-skin="ruled"] .solid{background:var(--ink);color:var(--bg)}
 :root[data-skin="ruled"] .ghost{background:transparent;border:1px solid var(--ink);color:var(--ink)}
 :root[data-skin="ruled"] .accentSoft{background:transparent;border:1px solid var(--accent);color:var(--accent-ink)}
 :root[data-skin="ruled"] .inp,
+:root[data-skin="ruled"] select.inp,
 :root[data-skin="ruled"] .dateBtn,
-:root[data-skin="ruled"] .hcNav{border-radius:2px}
+:root[data-skin="ruled"] .hcNav,
+:root[data-skin="ruled"] .modalItem{border-radius:2px}
 :root[data-skin="ruled"] .dateBtn{background:transparent}
 :root[data-skin="ruled"] .blk{border-radius:0}
 :root[data-skin="ruled"] .blk.hole{background:var(--field)}
@@ -383,20 +424,25 @@ button:disabled{opacity:.4;cursor:default}
 :root[data-skin="ruled"] .segBtn.on{background:var(--ink);color:var(--bg);box-shadow:none;border-color:var(--ink)}
 :root[data-skin="ruled"] .segBtn.on small{color:var(--bg);opacity:.7}
 :root[data-skin="ruled"] .modal{border-radius:2px;border:1px solid var(--ink)}
-:root[data-skin="ruled"] .toast{border-radius:2px}
+:root[data-skin="ruled"] .toast,
+:root[data-skin="ruled"] .banner{border-radius:2px}
 :root[data-skin="ruled"] .hcCell{border-radius:0}
 :root[data-skin="ruled"] .lapOverTag{border-radius:2px;background:transparent;border:1px solid var(--bad)}
+:root[data-skin="ruled"] .sw2{border-radius:2px}
+:root[data-skin="ruled"] .sw2::after{border-radius:1px}
 </style>
 </head>
 <body>
 <div class="page">
   <header class="header">
-    <div>
-      <div class="eyebrow">מעקב כתיבה · סת״ם</div>
-      <h1 class="h1">הַסֵּפֶר</h1>
-    </div>
+    <button class="projBtn" id="projBtn" onclick="ui.projects()">
+      <div class="eyebrow" id="projType">מעקב כתיבה · סת״ם</div>
+      <h1 class="h1" id="projName">הַסֵּפֶר</h1>
+    </button>
     <div class="pill" id="statePill"><i></i><span id="pct"></span></div>
   </header>
+
+  <div id="bannerHost"></div>
 
   <nav class="tabs">
     <button class="tab on" data-tab="main">היום</button>
@@ -410,14 +456,14 @@ button:disabled{opacity:.4;cursor:default}
       <div class="heroTop">
         <div>
           <span class="big" id="remaining"></span>
-          <span class="lbl" id="remainingLbl">עמודים עד הסיום</span>
+          <span class="lbl" id="remainingLbl"></span>
         </div>
         <div class="progRing" id="progRing"></div>
       </div>
       <div class="heroStats">
         <div class="stat" id="streakStat"><b id="streak"></b><span>רצף ימים</span></div>
-        <div class="stat" id="holesStat"><b id="holesCount"></b><span>עמודים מחוררים</span></div>
-        <div class="stat"><b id="holding"></b><span>אוחז בעמוד</span></div>
+        <div class="stat" id="holesStat"><b id="holesCount"></b><span id="holesLbl"></span></div>
+        <div class="stat"><b id="holding"></b><span id="holdingLbl"></span></div>
         <div class="stat"><b id="todayLines"></b><span>שורות היום</span></div>
       </div>
       <p class="status" id="statusLine"></p>
@@ -425,8 +471,8 @@ button:disabled{opacity:.4;cursor:default}
 
     <section class="card">
       <div class="rowBetween">
-        <h2 class="h2">העמוד הנוכחי · <span id="curAmud"></span></h2>
-        <span class="mono" id="bufferTxt"></span>
+        <h2 class="h2" id="curAmudLbl"></h2>
+        <span class="mono" id="bufferTxt" dir="ltr"></span>
       </div>
       <div class="amudBar"><div class="amudFill" id="amudFill"></div></div>
       <div class="spark" id="spark"></div>
@@ -434,31 +480,35 @@ button:disabled{opacity:.4;cursor:default}
       <div class="btnGrid">
         <button class="solid tall" onclick="app.addLines(5)">+5</button>
         <button class="solid tall" id="busyBtn"></button>
-        <button class="solid tall" onclick="app.completeAmud()">השלם עמוד</button>
+        <button class="solid tall" onclick="app.completeAmud()" id="completeBtn"></button>
       </div>
       <div class="rowGap">
         <input class="inp grow" type="number" min="1" inputmode="numeric" placeholder="מספר שורות אחר" id="customLines">
         <button class="ghost" onclick="app.addCustom()">רישום</button>
         <button class="ghost" onclick="app.undoLast()">ביטול אחרון</button>
       </div>
-      <p class="hint" style="margin-top:8px">מגיעים למכסה — העמוד נסגר ונרשם במגילה אוטומטית.</p>
+      <button class="ghost wide" style="margin-top:6px" onclick="app.logForDate()" id="backdateBtn">רישום ליום אחר…</button>
       <div id="fillHoleWrap"></div>
     </section>
 
     <section class="card">
       <div class="rowBetween">
-        <h2 class="h2">המגילה</h2>
-        <span class="mono" id="scrollCount"></span>
+        <h2 class="h2" id="scrollTitle">המגילה</h2>
+        <span class="mono" id="scrollCount" dir="ltr"></span>
       </div>
       <div class="scrollGrid" id="scrollGrid"></div>
-      <div class="legend">
-        <span><i class="blk done"></i>נכתב</span>
-        <span><i class="blk current"></i>הקולמוס</span>
-        <span><i class="blk hole"></i>מחורר</span>
-        <span><i class="blk"></i>ממתין</span>
-      </div>
+      <div class="legend" id="scrollLegend"></div>
       <p class="hint" id="holesList" style="margin-top:8px"></p>
-      <p class="hint" style="margin-top:6px">לחיצה על עמוד שחור — מחיקה: הוא יהפוך למחורר. לחיצה על מחורר — השלמה.</p>
+      <p class="hint" style="margin-top:6px" id="scrollHint"></p>
+    </section>
+
+    <section class="card">
+      <div class="rowBetween">
+        <h2 class="h2">הגהה</h2>
+        <span class="mono" id="proofCount" dir="ltr"></span>
+      </div>
+      <div class="leverGrid" id="proofGrid"></div>
+      <p class="hint" style="margin-top:8px">לחיצה על עמוד שנכתב פותחת את שלבי ההגהה שלו.</p>
     </section>
 
     <section class="card">
@@ -472,6 +522,7 @@ button:disabled{opacity:.4;cursor:default}
       <h2 class="h2">קצב · 14 ימים</h2>
       <div class="chart" id="chart"></div>
       <div class="leverGrid" id="paceGrid"></div>
+      <button class="accentSoft wide" style="padding:12px;margin-top:10px;font-weight:700" onclick="report.open()">דוח התקדמות לשיתוף</button>
     </section>
   </div>
 
@@ -497,19 +548,44 @@ button:disabled{opacity:.4;cursor:default}
       </div>
       <p class="hint" style="margin-top:8px" id="swHint"></p>
     </section>
+
     <section class="card">
       <div class="rowBetween">
-        <h2 class="h2">הקפות</h2>
+        <h2 class="h2">הקפות בסבב הנוכחי</h2>
         <span class="hint" id="lapAvg"></span>
       </div>
       <div id="lapsList"><p class="hint">ההקפה הראשונה תופיע כאן — החדשה תמיד למעלה.</p></div>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">סטטיסטיקת קצב · כל הזמנים</h2>
+      <div class="leverGrid" id="swStatGrid"></div>
+      <p class="hint" style="margin-top:12px;margin-bottom:2px">שורות לפי שעה ביום</p>
+      <div class="hourGrid" id="hourGrid"></div>
     </section>
   </div>
 
   <div id="tab-history" class="hidden">
     <section class="card">
-      <h2 class="h2">יומן רישומים</h2>
+      <h2 class="h2">שנה אחרונה</h2>
+      <div class="heatWrap"><div class="heat" id="heat"></div></div>
+      <div class="heatKey">
+        <span>פחות</span>
+        <i style="background:var(--heat0)"></i><i style="background:var(--heat1)"></i>
+        <i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i>
+        <i style="background:var(--heat4)"></i>
+        <span>יותר</span>
+        <span style="margin-inline-start:auto" id="heatTotal"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="rowBetween">
+        <h2 class="h2">יומן רישומים</h2>
+        <span class="mono" id="histCount"></span>
+      </div>
       <div id="histList"></div>
+      <button class="ghost wide" id="histMore" style="margin-top:10px" onclick="ui.moreHistory()">הצג עוד</button>
       <p class="hint" id="histTotal" style="margin-top:12px"></p>
     </section>
   </div>
@@ -533,15 +609,61 @@ button:disabled{opacity:.4;cursor:default}
     </section>
 
     <section class="card">
-      <h2 class="h2">הספר</h2>
+      <h2 class="h2">גיבוי וסנכרון</h2>
+      <div class="syncRow"><i class="dot" id="syncDot"></i><span id="syncMsg">לא מוגדר</span></div>
+      <div class="rowWrap" style="margin-bottom:12px">
+        <button class="ghost grow" onclick="gh.configure()">הגדרת סנכרון…</button>
+        <button class="ghost grow" onclick="gh.syncNow()" id="syncNowBtn">סנכרן עכשיו</button>
+      </div>
+      <div class="switchRow">
+        <div><p>סנכרון אוטומטי</p><small>מעלה שינויים כמה שניות אחרי כל רישום</small></div>
+        <button class="sw2" id="autoSyncSw" onclick="gh.toggleAuto()" aria-label="סנכרון אוטומטי"></button>
+      </div>
+      <div class="rowWrap" style="margin-top:12px">
+        <button class="ghost grow" onclick="backup.exportFile()">ייצוא גיבוי</button>
+        <button class="ghost grow" onclick="backup.pick()">שחזור מגיבוי</button>
+      </div>
+      <input type="file" accept="application/json,.json" id="importFile" class="hidden">
+      <p class="hint" style="margin-top:10px">הגיבוי כולל את כל הפרויקטים, ההיסטוריה וההגדרות. הטוקן של גיטהאב לא נכלל בו ולא נשלח לשום מקום מלבד גיטהאב עצמו.</p>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">תזכורת</h2>
+      <div class="switchRow">
+        <div><p>תזכורת יומית</p><small id="notifySub">מתריעה כשפותחים את האפליקציה אחרי השעה שנקבעה ועוד לא נרשם כלום</small></div>
+        <button class="sw2" id="notifySw" onclick="remind.toggle()" aria-label="תזכורת יומית"></button>
+      </div>
+      <label class="field" style="margin-top:12px">שעת התזכורת
+        <input class="inp small" type="number" min="0" max="23" inputmode="numeric" id="set-reminderHour">
+      </label>
+    </section>
+
+    <section class="card">
+      <div class="rowBetween">
+        <h2 class="h2">הפרויקט הנוכחי</h2>
+        <span class="mono" id="setProjName"></span>
+      </div>
+      <label class="field" style="margin-bottom:10px">שם
+        <input class="inp" type="text" id="set-name">
+      </label>
       <div class="setGrid">
-        <label class="field">סה״כ עמודים בספר<input class="inp" type="number" inputmode="numeric" id="set-totalAmud"></label>
-        <label class="field">נקודת פתיחה — עמודים שנכתבו<input class="inp" type="number" inputmode="numeric" id="set-baseWritten"></label>
+        <label class="field" id="lbl-totalAmud">סה״כ עמודים<input class="inp" type="number" inputmode="numeric" id="set-totalAmud"></label>
+        <label class="field" id="lbl-baseWritten">נקודת פתיחה<input class="inp" type="number" inputmode="numeric" id="set-baseWritten"></label>
         <label class="field">שורות בעמוד<input class="inp" type="number" inputmode="numeric" id="set-linesPerAmud"></label>
         <label class="field">מכסת יום עומס<input class="inp" type="number" inputmode="numeric" id="set-busyQuota"></label>
+        <label class="field" id="lbl-yeria">עמודים ביריעה<input class="inp" type="number" inputmode="numeric" id="set-amudPerYeria"></label>
       </div>
-      <p class="hint" style="margin-top:12px">עמודים מחוררים מנוהלים במגילה עצמה — לחיצה על עמוד מוחקת או משלימה אותו במקומו המדויק.</p>
-      <button class="danger" style="margin-top:14px" onclick="app.resetAll()">איפוס כל הנתונים</button>
+      <p class="hint" style="margin-top:12px">"עמודים ביריעה" — 0 מבטל את חלוקת היריעות בתצוגת המגילה.</p>
+      <div class="rowWrap" style="margin-top:14px">
+        <button class="ghost grow" onclick="ui.projects()">החלפת פרויקט…</button>
+        <button class="dangerGhost grow" style="padding:10px 12px" onclick="app.resetProject()">איפוס הפרויקט</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="h2">התקנה</h2>
+      <p class="hint" id="installHint"></p>
+      <button class="accentSoft wide hidden" style="padding:12px;margin-top:10px;font-weight:700" id="installBtn" onclick="pwa.install()">התקנה כאפליקציה</button>
     </section>
   </div>
 
@@ -554,42 +676,123 @@ button:disabled{opacity:.4;cursor:default}
 <script>
 "use strict";
 
-/* ═══ state ═══ */
-const KEY = "sefer-torah-html-v1";
-const DEFAULTS = {
-  baseWritten: 145,
-  totalAmud: 245,
-  holes: [10,11,12,13,14,15,16],
-  targetDate: "",
-  linesPerAmud: 42,
-  busyQuota: 10,
-  swThresholdMin: 2,
-  theme: "auto",
-  skin: "panel",
-  history: []
+/* ═══════════════════ מצב ═══════════════════ */
+const KEY = "sefer-v2";
+const OLD_KEY = "sefer-torah-html-v1";
+const TOKEN_KEY = "sefer-gh-token";   /* לעולם לא נכלל בגיבוי ולא נשלח לגיטהאב */
+
+const TYPES = {
+  torah:   { label:"ספר תורה", one:"עמוד",  many:"עמודים",  sheet:"יריעה", totalAmud:245, linesPerAmud:42, amudPerYeria:4 },
+  megila:  { label:"מגילה",    one:"עמודה", many:"עמודות",  sheet:"יריעה", totalAmud:11,  linesPerAmud:11, amudPerYeria:0 },
+  tefilin: { label:"תפילין",   one:"פרשה",  many:"פרשיות",  sheet:"",      totalAmud:8,   linesPerAmud:7,  amudPerYeria:0 },
+  mezuza:  { label:"מזוזות",   one:"מזוזה", many:"מזוזות",  sheet:"",      totalAmud:10,  linesPerAmud:22, amudPerYeria:0 }
 };
 
-let st;
-try { st = Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(KEY) || "{}")); }
-catch(e){ st = Object.assign({}, DEFAULTS); }
+const nowMs = () => Date.now();
+const uid = p => (p || "") + nowMs().toString(36) + Math.random().toString(36).slice(2, 7);
 
-function save(){
-  try { localStorage.setItem(KEY, JSON.stringify(st)); document.getElementById("footer").textContent = "נשמר אוטומטית · אין יום אפס"; }
-  catch(e){ document.getElementById("footer").textContent = "⚠️ שגיאת שמירה"; }
+function blankProject(type, name){
+  const t = TYPES[type] || TYPES.torah;
+  return {
+    id: uid("p"), name: name || t.label, type: type || "torah",
+    totalAmud: t.totalAmud, baseWritten: 0, linesPerAmud: t.linesPerAmud,
+    amudPerYeria: t.amudPerYeria, busyQuota: 10,
+    targetDate: "", holes: [], stages: {}, history: [], updatedAt: nowMs()
+  };
 }
 
-/* ═══ helpers ═══ */
+function freshState(){
+  const p = blankProject("torah", "ספר תורה");
+  return {
+    v: 2, activeId: p.id, projects: [p],
+    settings: { theme:"auto", skin:"panel", swThresholdMin:2, reminderHour:20, notify:false, lastNotified:"" },
+    swStats: [],
+    sw: { running:false, acc:0, startedAt:0, lapAnchor:0, beeped:false, laps:[] },
+    sync: { repo:"", branch:"main", path:"sefer-data.json", sha:"", lastSync:0, auto:true },
+    updatedAt: nowMs()
+  };
+}
+
+/* המרה מהמבנה הישן — שומרת כל רישום קיים */
+function migrate(old){
+  const s = freshState();
+  const p = s.projects[0];
+  p.totalAmud     = old.totalAmud     || p.totalAmud;
+  p.baseWritten   = old.baseWritten   || 0;
+  p.linesPerAmud  = old.linesPerAmud  || p.linesPerAmud;
+  p.busyQuota     = old.busyQuota     || p.busyQuota;
+  p.targetDate    = old.targetDate    || "";
+  p.holes         = Array.isArray(old.holes) ? old.holes.slice() : [];
+  p.history = (old.history || []).map(h => ({
+    id: String(h.id || uid("h")), date: h.date, lines: h.lines, src: h.src || "btn", t: nowMs()
+  }));
+  s.settings.theme          = old.theme  || "auto";
+  s.settings.skin           = old.skin   || "panel";
+  s.settings.swThresholdMin = old.swThresholdMin || 2;
+  return s;
+}
+
+function normalize(s){
+  const base = freshState();
+  s = Object.assign({}, base, s || {});
+  s.settings = Object.assign({}, base.settings, s.settings || {});
+  s.sync     = Object.assign({}, base.sync,     s.sync     || {});
+  s.sw       = Object.assign({}, base.sw,       s.sw       || {});
+  if (!Array.isArray(s.swStats)) s.swStats = [];
+  if (!Array.isArray(s.projects) || !s.projects.length) s.projects = base.projects;
+  s.projects = s.projects.map(p => Object.assign({}, blankProject(p.type, p.name), p, {
+    holes: Array.isArray(p.holes) ? p.holes : [],
+    stages: p.stages && typeof p.stages === "object" ? p.stages : {},
+    history: Array.isArray(p.history) ? p.history : []
+  }));
+  if (!s.projects.some(p => p.id === s.activeId)) s.activeId = s.projects[0].id;
+  return s;
+}
+
+let st;
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) st = normalize(JSON.parse(raw));
+  else {
+    const old = localStorage.getItem(OLD_KEY);
+    st = old ? normalize(migrate(JSON.parse(old))) : freshState();
+  }
+} catch(e){ st = freshState(); }
+
+const P = () => st.projects.find(p => p.id === st.activeId) || st.projects[0];
+const U = () => TYPES[P().type] || TYPES.torah;
+
+function touch(){
+  const p = P();
+  if (p) p.updatedAt = nowMs();
+  st.updatedAt = nowMs();
+}
+
+function save(opts){
+  try {
+    localStorage.setItem(KEY, JSON.stringify(st));
+    setFooter("נשמר אוטומטית · אין יום אפס");
+  } catch(e){ setFooter("⚠️ שגיאת שמירה מקומית"); }
+  if (!opts || opts.sync !== false) gh.queue();
+}
+function setFooter(txt){
+  const f = document.getElementById("footer");
+  if (f) f.textContent = txt;
+}
+
+/* ═══════════════════ עזרים ═══════════════════ */
 const isoOf = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
 const todayISO = () => isoOf(new Date());
 const heDate = s => new Date(s + "T00:00:00").toLocaleDateString("he-IL", {day:"numeric", month:"short"});
 const fmt = ms => { const t = Math.floor(ms/1000); return String(Math.floor(t/60)).padStart(2,"0") + ":" + String(t%60).padStart(2,"0"); };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const atMidnight = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+const live = p => p.history.filter(h => !h.del);
 
-/* ═══ Hebrew calendar (built-in Intl, no libraries) ═══ */
+/* ═══════════════════ לוח עברי ═══════════════════ */
 let hebOK = true, hebFmtEn;
 try {
-  hebFmtEn = new Intl.DateTimeFormat("en-u-ca-hebrew-nu-latn", { year: "numeric", month: "long", day: "numeric" });
+  hebFmtEn = new Intl.DateTimeFormat("en-u-ca-hebrew-nu-latn", { year:"numeric", month:"long", day:"numeric" });
   hebFmtEn.format(new Date());
 } catch(e){ hebOK = false; }
 
@@ -598,8 +801,7 @@ const HEB_MONTHS = { "Tishri":"תשרי","Heshvan":"חשוון","Kislev":"כסל
   "Tamuz":"תמוז","Av":"אב","Elul":"אלול" };
 
 function hInfo(d){
-  const parts = hebFmtEn.formatToParts(d);
-  const r = {};
+  const parts = hebFmtEn.formatToParts(d), r = {};
   for (const p of parts){
     if (p.type === "day") r.day = +p.value;
     if (p.type === "month") r.month = p.value;
@@ -607,17 +809,14 @@ function hInfo(d){
   }
   return r;
 }
-
 function gDay(n){
   if (n === 15) return "ט״ו";
   if (n === 16) return "ט״ז";
-  const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"];
-  const tens = { 1:"י", 2:"כ", 3:"ל" };
+  const ones = ["","א","ב","ג","ד","ה","ו","ז","ח","ט"], tens = { 1:"י", 2:"כ", 3:"ל" };
   if (n < 10) return ones[n] + "׳";
   const t = Math.floor(n/10), u = n % 10;
   return u ? tens[t] + "״" + ones[u] : tens[t] + "׳";
 }
-
 function gYear(y){
   let n = y % 1000;
   const vals = [[400,"ת"],[300,"ש"],[200,"ר"],[100,"ק"],[90,"צ"],[80,"פ"],[70,"ע"],[60,"ס"],[50,"נ"],[40,"מ"],[30,"ל"],[20,"כ"],[10,"י"],[9,"ט"],[8,"ח"],[7,"ז"],[6,"ו"],[5,"ה"],[4,"ד"],[3,"ג"],[2,"ב"],[1,"א"]];
@@ -626,22 +825,10 @@ function gYear(y){
   out = out.replace("יה","טו").replace("יו","טז");
   return out.length > 1 ? out.slice(0,-1) + "״" + out.slice(-1) : out + "׳";
 }
+function hebStr(d){ if (!hebOK) return ""; const h = hInfo(d); return gDay(h.day) + " " + (HEB_MONTHS[h.month] || h.month) + " " + gYear(h.year); }
+function hebMonthYear(d){ if (!hebOK) return ""; const h = hInfo(d); return (HEB_MONTHS[h.month] || h.month) + " " + gYear(h.year); }
 
-function hebStr(d){
-  if (!hebOK) return "";
-  const h = hInfo(d);
-  return gDay(h.day) + " " + (HEB_MONTHS[h.month] || h.month) + " " + gYear(h.year);
-}
-function hebMonthYear(d){
-  if (!hebOK) return "";
-  const h = hInfo(d);
-  return (HEB_MONTHS[h.month] || h.month) + " " + gYear(h.year);
-}
-
-/* days when a sofer cannot write (Israel):
-   Shabbat · Rosh Hashana (1-2 Tishrei) · Yom Kippur (10) ·
-   Sukkot through Shemini Atzeret/Simchat Torah (15-22 Tishrei) ·
-   Pesach incl. chol hamoed (15-21 Nisan) · Shavuot (6 Sivan) */
+/* ימים שאין בהם כתיבה (ארץ ישראל) */
 function noWriteDay(d){
   if (d.getDay() === 6) return "שבת";
   if (!hebOK) return null;
@@ -655,31 +842,27 @@ function noWriteDay(d){
   if (h.month === "Sivan" && h.day === 6) return "שבועות";
   return null;
 }
-
 function writingDaysUntil(targetISO){
   const t = atMidnight(new Date(targetISO + "T00:00:00"));
-  let d = atMidnight(new Date());
-  let count = 0, guard = 0;
-  while (d < t && guard < 1500) {
-    if (!noWriteDay(d)) count++;
-    d.setDate(d.getDate() + 1);
-    guard++;
-  }
+  let d = atMidnight(new Date()), count = 0, guard = 0;
+  while (d < t && guard < 1500) { if (!noWriteDay(d)) count++; d.setDate(d.getDate()+1); guard++; }
   return count;
 }
 
-/* ═══ derived ═══ */
+/* ═══════════════════ חישובים ═══════════════════ */
 function derive(){
-  const L = st.linesPerAmud || 42;
-  const totalLines = st.history.reduce((a,h) => a + h.lines, 0);
-  const frontier = st.baseWritten + Math.floor(totalLines / L);
+  const p = P();
+  const L = p.linesPerAmud || 42;
+  const hist = live(p);
+  const totalLines = hist.reduce((a,h) => a + h.lines, 0);
+  const frontier = p.baseWritten + Math.floor(totalLines / L);
   const buffer = totalLines % L;
-  const holes = st.holes.filter(h => h >= 1 && h <= frontier).sort((a,b) => a - b);
-  const remaining = Math.max(0, st.totalAmud - frontier) + holes.length;
-  const pct = Math.min(100, Math.round(((frontier - holes.length) / st.totalAmud) * 100));
+  const holes = p.holes.filter(h => h >= 1 && h <= frontier).sort((a,b) => a - b);
+  const remaining = Math.max(0, p.totalAmud - frontier) + holes.length;
+  const pct = Math.min(100, Math.max(0, Math.round(((frontier - holes.length) / Math.max(p.totalAmud,1)) * 100)));
 
   const logs = {};
-  for (const h of st.history) logs[h.date] = (logs[h.date] || 0) + h.lines;
+  for (const h of hist) logs[h.date] = (logs[h.date] || 0) + h.lines;
   const todayLines = logs[todayISO()] || 0;
 
   let streak = 0;
@@ -701,107 +884,406 @@ function derive(){
 
   let projection = null;
   if (amudPerWeek > 0.05) {
-    const p = new Date();
-    p.setDate(p.getDate() + Math.round((remaining / amudPerWeek) * 7));
-    projection = p;
+    const pr = new Date();
+    pr.setDate(pr.getDate() + Math.round((remaining / amudPerWeek) * 7));
+    projection = pr;
   }
 
   let lever = null;
-  if (st.targetDate) {
-    const t = new Date(st.targetDate + "T00:00:00");
+  if (p.targetDate) {
+    const t = new Date(p.targetDate + "T00:00:00");
     const daysLeft = Math.ceil((atMidnight(t) - atMidnight(new Date())) / 86400000);
-    const writeDays = writingDaysUntil(st.targetDate);
+    const writeDays = writingDaysUntil(p.targetDate);
     const weeksLeft = Math.max(daysLeft / 7, 0.01);
     lever = {
-      daysLeft,
-      writeDays,
+      daysLeft, writeDays,
       neededPerWeek: remaining / weeksLeft,
       neededLinesPerWriteDay: (remaining * L) / Math.max(writeDays, 1),
       onTrack: amudPerWeek >= remaining / weeksLeft
     };
   }
 
-  let status;
-  if (todayLines >= L) status = "עמוד שלם היום. יש עדים.";
-  else if (todayLines >= st.busyQuota) status = "המכסה הקטנה הושגה — הרצף חי.";
-  else if (todayLines > 0) status = "עוד " + (st.busyQuota - todayLines) + " שורות למכסת יום עומס.";
-  else if (streak > 0) status = "רצף של " + streak + " ימים על הכף. " + st.busyQuota + " שורות שומרות עליו.";
-  else status = "אין יום אפס. גם " + st.busyQuota + " שורות זה כתיבה.";
+  /* הגהה — נספרת רק על עמודים שנכתבו ואינם מחוררים */
+  const holeSet = new Set(holes);
+  let proof = { a:0, b:0, pc:0, done:0, eligible:0 };
+  for (let i = 1; i <= frontier; i++) {
+    if (holeSet.has(i)) continue;
+    proof.eligible++;
+    const s = p.stages[i] || {};
+    if (s.a) proof.a++;
+    if (s.b) proof.b++;
+    if (s.pc) proof.pc++;
+    if (s.a && s.b && s.pc) proof.done++;
+  }
 
-  return { L, totalLines, frontier, buffer, holes, remaining, pct, logs, todayLines, streak, days, last7, amudPerWeek, record, projection, lever, status };
+  const U0 = TYPES[p.type] || TYPES.torah;
+  let status;
+  if (todayLines >= L) status = U0.one + " שלם היום. יש עדים.";
+  else if (todayLines >= p.busyQuota) status = "המכסה הקטנה הושגה — הרצף חי.";
+  else if (todayLines > 0) status = "עוד " + (p.busyQuota - todayLines) + " שורות למכסת יום עומס.";
+  else if (streak > 0) status = "רצף של " + streak + " ימים על הכף. " + p.busyQuota + " שורות שומרות עליו.";
+  else status = "אין יום אפס. גם " + p.busyQuota + " שורות זה כתיבה.";
+
+  return { p, L, totalLines, frontier, buffer, holes, holeSet, remaining, pct, logs, todayLines,
+           streak, days, last7, amudPerWeek, record, projection, lever, proof, status };
 }
 
-/* ═══ toast + modals ═══ */
+/* ═══════════════════ טוסט ומודאלים ═══════════════════ */
 let toastTimer = null;
 function toast(text, big){
   const host = document.getElementById("toastHost");
   host.innerHTML = '<div class="toast' + (big ? ' toastBig' : '') + '">' + esc(text) + '</div>';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => host.innerHTML = "", big ? 2600 : 1600);
+  toastTimer = setTimeout(() => host.innerHTML = "", big ? 2600 : 1900);
 }
-
-function confirmBox(msg, onYes){
+function closeModal(){ document.getElementById("modalHost").innerHTML = ""; }
+function openModal(html, wire){
   const host = document.getElementById("modalHost");
-  host.innerHTML =
-    '<div class="overlay" id="ovl"><div class="modal">' +
+  host.innerHTML = '<div class="overlay" id="ovl"><div class="modal">' + html + '</div></div>';
+  document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") closeModal(); };
+  if (wire) wire(host);
+}
+function confirmBox(msg, onYes, yesLabel){
+  openModal(
+    '<p>' + esc(msg) + '</p><div class="rowGap">' +
+    '<button class="danger grow" id="mYes">' + esc(yesLabel || "כן, בצע") + '</button>' +
+    '<button class="ghost grow" id="mNo">ביטול</button></div>',
+    () => {
+      document.getElementById("mNo").onclick = closeModal;
+      document.getElementById("mYes").onclick = () => { closeModal(); onYes(); };
+    });
+}
+function promptBox(msg, initial, onOk, type){
+  openModal(
     '<p>' + esc(msg) + '</p>' +
-    '<div class="rowGap">' +
-    '<button class="danger grow" id="mYes">כן, בצע</button>' +
-    '<button class="ghost grow" id="mNo">ביטול</button>' +
-    '</div></div></div>';
-  document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") host.innerHTML = ""; };
-  document.getElementById("mNo").onclick = () => host.innerHTML = "";
-  document.getElementById("mYes").onclick = () => { host.innerHTML = ""; onYes(); };
+    '<input class="inp" type="' + (type || "number") + '" inputmode="' + (type === "text" ? "text" : "numeric") +
+      '" id="mInp" value="' + esc(initial) + '" style="margin-bottom:14px">' +
+    '<div class="rowGap"><button class="solid grow" id="mYes" style="padding:12px">שמור</button>' +
+    '<button class="ghost grow" id="mNo">ביטול</button></div>',
+    () => {
+      document.getElementById("mNo").onclick = closeModal;
+      document.getElementById("mYes").onclick = () => {
+        const el = document.getElementById("mInp");
+        const v = type === "text" ? el.value.trim() : parseInt(el.value, 10);
+        closeModal(); onOk(v);
+      };
+      setTimeout(() => { const i = document.getElementById("mInp"); if (i) i.select(); }, 50);
+    });
 }
 
-function promptBox(msg, initial, onOk){
-  const host = document.getElementById("modalHost");
-  host.innerHTML =
-    '<div class="overlay" id="ovl"><div class="modal">' +
-    '<p>' + esc(msg) + '</p>' +
-    '<input class="inp" type="number" inputmode="numeric" id="mInp" value="' + esc(initial) + '" style="margin-bottom:14px">' +
-    '<div class="rowGap">' +
-    '<button class="solid grow" id="mYes" style="padding:12px">שמור</button>' +
-    '<button class="ghost grow" id="mNo">ביטול</button>' +
-    '</div></div></div>';
-  document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") host.innerHTML = ""; };
-  document.getElementById("mNo").onclick = () => host.innerHTML = "";
-  document.getElementById("mYes").onclick = () => {
-    const v = parseInt(document.getElementById("mInp").value, 10);
-    host.innerHTML = "";
-    onOk(v);
-  };
-  setTimeout(() => document.getElementById("mInp").select(), 50);
+/* ═══════════════════ גיבוי לקובץ ═══════════════════ */
+function payload(){
+  return { v:2, activeId: st.activeId, projects: st.projects, settings: st.settings,
+           swStats: st.swStats, updatedAt: st.updatedAt };
 }
 
-/* ═══ Hebrew date picker ═══ */
+const backup = {
+  exportFile(){
+    try {
+      const blob = new Blob([JSON.stringify(payload(), null, 2)], { type:"application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "hasefer-backup-" + todayISO() + ".json";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast("הגיבוי הורד");
+    } catch(e){ toast("הייצוא נכשל: " + e.message); }
+  },
+  pick(){ document.getElementById("importFile").click(); },
+  load(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      let data;
+      try { data = JSON.parse(reader.result); }
+      catch(e){ toast("הקובץ אינו גיבוי תקין"); return; }
+      if (!data || !Array.isArray(data.projects)) { toast("הקובץ אינו גיבוי של הספר"); return; }
+      const n = data.projects.reduce((a,p) => a + (p.history || []).length, 0);
+      confirmBox("לשחזר " + data.projects.length + " פרויקטים ו־" + n + " רישומים? הנתונים הנוכחיים במכשיר יוחלפו.", () => {
+        const keepSync = st.sync;
+        st = normalize(data);
+        st.sync = keepSync;
+        st.updatedAt = nowMs();
+        save(); render();
+        toast("שוחזר מהגיבוי", true);
+      }, "כן, שחזר");
+    };
+    reader.readAsText(file);
+  }
+};
+
+/* ═══════════════════ מיזוג מצבים ═══════════════════ */
+function mergeStates(a, b){
+  /* a = מקומי, b = מרוחק. איחוד רישומים לפי מזהה, שאר השדות לפי מי עודכן אחרון */
+  const out = { v:2, projects:[], activeId: a.activeId, settings:null, swStats:[], updatedAt: Math.max(a.updatedAt||0, b.updatedAt||0) };
+  const byId = {};
+  (a.projects || []).forEach(p => byId[p.id] = { local:p });
+  (b.projects || []).forEach(p => { byId[p.id] = byId[p.id] || {}; byId[p.id].remote = p; });
+
+  for (const id in byId){
+    const l = byId[id].local, r = byId[id].remote;
+    if (!r) { out.projects.push(l); continue; }
+    if (!l) { out.projects.push(r); continue; }
+    const newer = (l.updatedAt || 0) >= (r.updatedAt || 0) ? l : r;
+    const merged = Object.assign({}, newer);
+    const hist = {};
+    (l.history || []).forEach(h => hist[h.id] = h);
+    (r.history || []).forEach(h => {
+      const cur = hist[h.id];
+      if (!cur || (h.t || 0) > (cur.t || 0)) hist[h.id] = h;
+    });
+    merged.history = Object.keys(hist).map(k => hist[k]).sort((x,y) => (x.date < y.date ? -1 : x.date > y.date ? 1 : 0));
+    out.projects.push(merged);
+  }
+  const aNewer = (a.updatedAt || 0) >= (b.updatedAt || 0);
+  out.settings = aNewer ? a.settings : b.settings;
+  out.swStats  = (a.swStats || []).length >= (b.swStats || []).length ? a.swStats : b.swStats;
+  if (!out.projects.some(p => p.id === out.activeId)) out.activeId = out.projects[0] && out.projects[0].id;
+  return out;
+}
+
+/* ═══════════════════ סנכרון גיטהאב ═══════════════════ */
+const b64encode = str => {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+};
+const b64decode = b64 => {
+  const bin = atob(b64.replace(/\s/g, ""));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+};
+
+const gh = {
+  timer: null, busy: false, dirty: false, lastErr: "",
+
+  token(){ try { return localStorage.getItem(TOKEN_KEY) || ""; } catch(e){ return ""; } },
+  ready(){ return !!(this.token() && st.sync.repo); },
+
+  headers(){
+    return {
+      "Authorization": "Bearer " + this.token(),
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+  },
+  url(){
+    return "https://api.github.com/repos/" + st.sync.repo + "/contents/" +
+      st.sync.path.split("/").map(encodeURIComponent).join("/");
+  },
+
+  status(state, msg){
+    const dot = document.getElementById("syncDot");
+    const el  = document.getElementById("syncMsg");
+    if (dot) dot.className = "dot" + (state ? " " + state : "");
+    if (el) el.textContent = msg;
+  },
+
+  describe(){
+    if (!this.ready()) return ["", "לא מוגדר — הנתונים נשמרים רק במכשיר הזה"];
+    if (this.busy) return ["busy", "מסנכרן…"];
+    if (this.lastErr) return ["err", "שגיאה: " + this.lastErr];
+    if (this.dirty) return ["busy", "יש שינויים שלא עלו"];
+    if (!st.sync.lastSync) return ["", "מחובר · עוד לא סונכרן"];
+    const m = Math.round((nowMs() - st.sync.lastSync) / 60000);
+    return ["ok", "מסונכרן · " + (m < 1 ? "עכשיו" : m < 60 ? "לפני " + m + " דק׳" : "לפני " + Math.round(m/60) + " שע׳")];
+  },
+  refresh(){ const d = this.describe(); this.status(d[0], d[1]); },
+
+  queue(){
+    this.dirty = true;
+    this.refresh();
+    if (!this.ready() || !st.sync.auto) return;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.push(true), 8000);
+  },
+
+  async read(){
+    const res = await fetch(this.url() + "?ref=" + encodeURIComponent(st.sync.branch) + "&t=" + nowMs(), { headers: this.headers() });
+    if (res.status === 404) return { missing:true };
+    if (!res.ok) throw new Error("קריאה נכשלה (" + res.status + ")");
+    const j = await res.json();
+    return { sha: j.sha, data: JSON.parse(b64decode(j.content || "")) };
+  },
+
+  async write(obj, sha){
+    const res = await fetch(this.url(), {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type":"application/json" }, this.headers()),
+      body: JSON.stringify({
+        message: "עדכון נתוני הספר · " + new Date().toLocaleString("he-IL"),
+        content: b64encode(JSON.stringify(obj, null, 1)),
+        branch: st.sync.branch,
+        sha: sha || undefined
+      })
+    });
+    if (!res.ok) {
+      let detail = res.status;
+      try { const j = await res.json(); if (j.message) detail = j.message; } catch(e){}
+      const err = new Error(String(detail));
+      err.status = res.status;
+      throw err;
+    }
+    const j = await res.json();
+    return j.content && j.content.sha;
+  },
+
+  async push(silent){
+    if (!this.ready() || this.busy) return;
+    this.busy = true; this.lastErr = ""; this.refresh();
+    try {
+      let sha = st.sync.sha;
+      try {
+        sha = await this.write(payload(), sha) || sha;
+      } catch(e){
+        if (e.status === 409 || e.status === 422 || e.status === 404) {
+          const remote = await this.read();
+          if (!remote.missing && remote.data) {
+            st = normalize(mergeStates(payload(), remote.data));
+            st.sync = Object.assign({}, st.sync);
+          }
+          sha = await this.write(payload(), remote.missing ? "" : remote.sha) || "";
+        } else throw e;
+      }
+      st.sync.sha = sha || st.sync.sha;
+      st.sync.lastSync = nowMs();
+      this.dirty = false;
+      localStorage.setItem(KEY, JSON.stringify(st));
+      if (!silent) toast("הועלה לגיטהאב");
+    } catch(e){
+      this.lastErr = e.message;
+      if (!silent) toast("סנכרון נכשל: " + e.message);
+    }
+    this.busy = false;
+    this.refresh();
+  },
+
+  async pull(silent){
+    if (!this.ready() || this.busy) return;
+    this.busy = true; this.lastErr = ""; this.refresh();
+    try {
+      const remote = await this.read();
+      if (remote.missing) {
+        this.busy = false;
+        await this.push(silent);
+        return;
+      }
+      const before = JSON.stringify(payload());
+      const keep = st.sync, keepSw = st.sw;
+      st = normalize(mergeStates(payload(), remote.data));
+      st.sync = keep; st.sw = keepSw;
+      st.sync.sha = remote.sha;
+      st.sync.lastSync = nowMs();
+      const changed = JSON.stringify(payload()) !== before;
+      localStorage.setItem(KEY, JSON.stringify(st));
+      if (changed) { this.dirty = true; render(); if (!silent) toast("נמשכו שינויים מגיטהאב"); }
+      else this.dirty = false;
+    } catch(e){
+      this.lastErr = e.message;
+      if (!silent) toast("משיכה נכשלה: " + e.message);
+    }
+    this.busy = false;
+    this.refresh();
+    if (this.dirty && st.sync.auto) this.push(true);
+  },
+
+  async syncNow(){
+    if (!this.ready()) { this.configure(); return; }
+    await this.pull(false);
+    if (this.dirty) await this.push(false);
+  },
+
+  toggleAuto(){
+    st.sync.auto = !st.sync.auto;
+    save({ sync:false });
+    document.getElementById("autoSyncSw").classList.toggle("on", st.sync.auto);
+    toast(st.sync.auto ? "סנכרון אוטומטי פועל" : "סנכרון אוטומטי כבוי");
+  },
+
+  configure(){
+    const t = this.token();
+    openModal(
+      '<h3>סנכרון לגיטהאב</h3>' +
+      '<p style="font-size:13.5px;color:var(--ink3);margin-bottom:14px">' +
+      'הנתונים ישמרו כקובץ JSON במאגר שתבחר — גיבוי אמיתי, היסטוריית גרסאות, ואותם נתונים בכל מכשיר.<br><br>' +
+      '<b>מומלץ מאגר פרטי.</b> צור מאגר חדש בשם hasefer-data וסמן Private, ואז הנתונים לא גלויים לאף אחד.</p>' +
+      '<label class="field" style="margin-bottom:10px">מאגר (owner/repo)' +
+      '<input class="inp" type="text" id="ghRepo" placeholder="m583249400-droid/hasefer-data" value="' + esc(st.sync.repo) + '"></label>' +
+      '<div class="setGrid" style="margin-bottom:10px">' +
+      '<label class="field">ענף<input class="inp" type="text" id="ghBranch" value="' + esc(st.sync.branch) + '"></label>' +
+      '<label class="field">שם הקובץ<input class="inp" type="text" id="ghPath" value="' + esc(st.sync.path) + '"></label>' +
+      '</div>' +
+      '<label class="field" style="margin-bottom:6px">טוקן גישה' +
+      '<input class="inp" type="password" id="ghToken" placeholder="' + (t ? "שמור — השאר ריק כדי לא לשנות" : "github_pat_…") + '"></label>' +
+      '<p class="hint" style="margin-bottom:14px">' +
+      'GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.<br>' +
+      'הרשאה: <b>Repository permissions → Contents → Read and write</b>, ורק על המאגר הזה.<br>' +
+      'הטוקן נשמר רק בדפדפן הזה, לא נכלל בגיבוי ולא נשלח לשום מקום מלבד גיטהאב.</p>' +
+      '<div class="rowGap"><button class="solid grow" id="ghSave" style="padding:12px;font-weight:700">שמור וסנכרן</button>' +
+      '<button class="ghost grow" id="ghCancel">ביטול</button></div>' +
+      (t ? '<button class="dangerGhost wide" style="margin-top:10px;padding:10px" id="ghForget">ניתוק וניקוי הטוקן</button>' : ''),
+      () => {
+        document.getElementById("ghCancel").onclick = closeModal;
+        const forget = document.getElementById("ghForget");
+        if (forget) forget.onclick = () => {
+          try { localStorage.removeItem(TOKEN_KEY); } catch(e){}
+          st.sync.repo = ""; st.sync.sha = ""; st.sync.lastSync = 0;
+          save({ sync:false }); closeModal(); this.refresh(); toast("הסנכרון נותק");
+        };
+        document.getElementById("ghSave").onclick = () => {
+          const repo = document.getElementById("ghRepo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "");
+          const tok  = document.getElementById("ghToken").value.trim();
+          if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { toast("מאגר לא תקין — owner/repo"); return; }
+          if (tok) { try { localStorage.setItem(TOKEN_KEY, tok); } catch(e){} }
+          if (!this.token()) { toast("צריך טוקן"); return; }
+          st.sync.repo   = repo;
+          st.sync.branch = document.getElementById("ghBranch").value.trim() || "main";
+          st.sync.path   = document.getElementById("ghPath").value.trim() || "sefer-data.json";
+          st.sync.sha    = "";
+          save({ sync:false });
+          closeModal();
+          this.syncNow();
+        };
+      });
+  }
+};
+
+/* ═══════════════════ בורר תאריך עברי ═══════════════════ */
 const hc = {
-  cursor: null,
+  cursor: null, mode: "target",
 
-  open(){
+  open(mode){
+    this.mode = mode || "target";
     if (!hebOK) { this.fallback(); return; }
-    this.cursor = st.targetDate ? new Date(st.targetDate + "T00:00:00") : new Date();
+    const p = P();
+    this.cursor = (this.mode === "target" && p.targetDate)
+      ? new Date(p.targetDate + "T00:00:00") : new Date();
     this.render();
   },
 
   fallback(){
-    /* very old browser without hebrew calendar support */
-    const host = document.getElementById("modalHost");
-    host.innerHTML =
-      '<div class="overlay" id="ovl"><div class="modal">' +
-      '<p>הדפדפן לא תומך בלוח עברי מובנה — בחר תאריך לועזי:</p>' +
-      '<input class="inp" type="date" id="mDate" value="' + esc(st.targetDate) + '" style="margin-bottom:14px">' +
-      '<div class="rowGap"><button class="solid grow" id="mYes" style="padding:12px">שמור</button>' +
-      '<button class="ghost grow" id="mNo">ביטול</button></div></div></div>';
-    document.getElementById("mNo").onclick = () => host.innerHTML = "";
-    document.getElementById("mYes").onclick = () => {
-      st.targetDate = document.getElementById("mDate").value;
-      host.innerHTML = ""; save(); render();
-    };
+    const p = P();
+    const isTarget = this.mode === "target";
+    openModal(
+      '<p>' + (isTarget ? "בחר תאריך יעד לועזי:" : "בחר תאריך לרישום:") + '</p>' +
+      '<input class="inp" type="date" id="mDate" value="' + esc(isTarget ? p.targetDate : todayISO()) + '" style="margin-bottom:14px">' +
+      '<div class="rowGap"><button class="solid grow" id="mYes" style="padding:12px">אישור</button>' +
+      '<button class="ghost grow" id="mNo">ביטול</button></div>',
+      () => {
+        document.getElementById("mNo").onclick = closeModal;
+        document.getElementById("mYes").onclick = () => {
+          const v = document.getElementById("mDate").value;
+          closeModal();
+          if (!v) return;
+          if (isTarget) { p.targetDate = v; touch(); save(); render(); }
+          else app.askLinesFor(v);
+        };
+      });
   },
 
   monthDays(anchor){
-    /* all gregorian dates of the hebrew month containing anchor */
     const key = d => { const h = hInfo(d); return h.month + "|" + h.year; };
     const target = key(anchor);
     let first = new Date(anchor);
@@ -812,45 +1294,46 @@ const hc = {
     }
     const days = [];
     let d = new Date(first);
-    while (key(d) === target && days.length < 31) {
-      days.push(new Date(d));
-      d.setDate(d.getDate() + 1);
-    }
+    while (key(d) === target && days.length < 31) { days.push(new Date(d)); d.setDate(d.getDate() + 1); }
     return days;
   },
 
   render(){
+    const p = P();
+    const isTarget = this.mode === "target";
     const days = this.monthDays(this.cursor);
     const today = atMidnight(new Date());
-    const selISO = st.targetDate;
+    const selISO = isTarget ? p.targetDate : "";
     const h0 = hInfo(days[0]);
     const title = (HEB_MONTHS[h0.month] || h0.month) + " " + gYear(h0.year);
+    const logs = derive().logs;
 
     let cells = "";
     for (let i = 0; i < days[0].getDay(); i++) cells += "<span></span>";
     for (const d of days) {
       const hd = hInfo(d).day;
+      const iso = isoOf(d);
       const isPast = atMidnight(d) < today;
+      const isFuture = atMidnight(d) > today;
       const isToday = atMidnight(d).getTime() === today.getTime();
       const nw = noWriteDay(d);
+      const blocked = isTarget ? isPast : isFuture;
       let cls = "hcCell";
       if (nw === "שבת") cls += " hcShab";
       else if (nw) cls += " hcHoly";
-      if (isPast) cls += " hcPast";
+      if (blocked) cls += " hcPast";
       if (isToday) cls += " hcToday";
-      if (selISO && isoOf(d) === selISO) cls += " hcSel";
-      cells += '<button class="' + cls + '" data-d="' + isoOf(d) + '"' + (isPast ? ' data-past="1"' : '') +
-        (nw ? ' title="' + esc(nw) + '"' : '') + '>' + gDay(hd) + '<small>' + d.getDate() + "." + (d.getMonth()+1) + '</small></button>';
+      if (selISO && iso === selISO) cls += " hcSel";
+      const sub = isTarget ? (d.getDate() + "." + (d.getMonth()+1))
+                           : (logs[iso] ? logs[iso] + " ש׳" : d.getDate() + "." + (d.getMonth()+1));
+      cells += '<button class="' + cls + '" data-d="' + iso + '"' + (blocked ? ' data-blocked="1"' : '') +
+        (nw ? ' title="' + esc(nw) + '"' : '') + '>' + gDay(hd) + '<small>' + sub + '</small></button>';
     }
 
-    const host = document.getElementById("modalHost");
-    host.innerHTML =
-      '<div class="overlay" id="ovl"><div class="modal">' +
-      '<div class="hcHead">' +
-      '<button class="hcNav" id="hcPrev">‹</button>' +
+    openModal(
+      '<div class="hcHead"><button class="hcNav" id="hcPrev">‹</button>' +
       '<span class="hcTitle">' + esc(title) + '</span>' +
-      '<button class="hcNav" id="hcNext">›</button>' +
-      '</div>' +
+      '<button class="hcNav" id="hcNext">›</button></div>' +
       '<div class="hcWeek"><span class="hcWd">א</span><span class="hcWd">ב</span><span class="hcWd">ג</span><span class="hcWd">ד</span><span class="hcWd">ה</span><span class="hcWd">ו</span><span class="hcWd">ש</span></div>' +
       '<div class="hcGrid" id="hcGrid">' + cells + '</div>' +
       '<div class="hcLegend">' +
@@ -858,55 +1341,57 @@ const hc = {
       '<span><i class="hcDot" style="background:var(--line3)"></i>שבת</span>' +
       '<span><i class="hcDot" style="background:var(--panel);box-shadow:inset 0 0 0 1.5px var(--accent)"></i>היום</span>' +
       '</div>' +
-      (selISO ? '<button class="ghost" style="width:100%;margin-top:14px" id="hcClear">הסרת התאריך</button>' : '') +
-      '</div></div>';
-
-    document.getElementById("ovl").onclick = e => { if (e.target.id === "ovl") host.innerHTML = ""; };
-    document.getElementById("hcPrev").onclick = () => {
-      const first = this.monthDays(this.cursor)[0];
-      const prev = new Date(first); prev.setDate(prev.getDate() - 1);
-      this.cursor = prev; this.render();
-    };
-    document.getElementById("hcNext").onclick = () => {
-      const days2 = this.monthDays(this.cursor);
-      const next = new Date(days2[days2.length - 1]); next.setDate(next.getDate() + 1);
-      this.cursor = next; this.render();
-    };
-    document.getElementById("hcGrid").onclick = e => {
-      const b = e.target.closest("[data-d]");
-      if (!b) return;
-      if (b.dataset.past) { toast("התאריך כבר עבר"); return; }
-      st.targetDate = b.dataset.d;
-      host.innerHTML = "";
-      save(); render();
-      toast("היעד נקבע: " + hebStr(new Date(b.dataset.d + "T00:00:00")), true);
-    };
-    const clr = document.getElementById("hcClear");
-    if (clr) clr.onclick = () => {
-      confirmBox("להסיר את תאריך היעד?", () => { st.targetDate = ""; save(); render(); });
-      host.innerHTML = "";
-    };
+      (isTarget && p.targetDate ? '<button class="ghost wide" style="margin-top:14px" id="hcClear">הסרת התאריך</button>' : ''),
+      () => {
+        document.getElementById("hcPrev").onclick = () => {
+          const first = this.monthDays(this.cursor)[0];
+          const prev = new Date(first); prev.setDate(prev.getDate() - 1);
+          this.cursor = prev; this.render();
+        };
+        document.getElementById("hcNext").onclick = () => {
+          const d2 = this.monthDays(this.cursor);
+          const next = new Date(d2[d2.length - 1]); next.setDate(next.getDate() + 1);
+          this.cursor = next; this.render();
+        };
+        document.getElementById("hcGrid").onclick = e => {
+          const b = e.target.closest("[data-d]");
+          if (!b) return;
+          if (b.dataset.blocked) { toast(isTarget ? "התאריך כבר עבר" : "אי אפשר לרשום ליום עתידי"); return; }
+          const iso = b.dataset.d;
+          closeModal();
+          if (isTarget) {
+            p.targetDate = iso; touch(); save(); render();
+            toast("היעד נקבע: " + hebStr(new Date(iso + "T00:00:00")), true);
+          } else app.askLinesFor(iso);
+        };
+        const clr = document.getElementById("hcClear");
+        if (clr) clr.onclick = () => {
+          closeModal();
+          confirmBox("להסיר את תאריך היעד?", () => { P().targetDate = ""; touch(); save(); render(); });
+        };
+      });
   }
 };
 
-/* ═══ app actions ═══ */
+/* ═══════════════════ פעולות ═══════════════════ */
 const app = {
-  addLines(n, src){
+  addLines(n, src, date){
     n = parseInt(n, 10);
     if (!n || n <= 0) return;
+    const p = P();
     const before = derive().frontier;
-    const t = todayISO();
+    const t = date || todayISO();
     if (src === "sw") {
-      const ex = st.history.find(h => h.date === t && h.src === "sw");
-      if (ex) ex.lines += n;
-      else st.history.push({ id: "sw" + Date.now(), date: t, lines: n, src: "sw" });
+      const ex = live(p).find(h => h.date === t && h.src === "sw");
+      if (ex) { ex.lines += n; ex.t = nowMs(); }
+      else p.history.push({ id: uid("s"), date: t, lines: n, src: "sw", t: nowMs() });
     } else {
-      st.history.push({ id: Date.now() + Math.random().toString(36).slice(2,6), date: t, lines: n });
+      p.history.push({ id: uid("h"), date: t, lines: n, src: src || "btn", t: nowMs() });
     }
-    save();
+    touch(); save();
     const D = derive();
-    if (D.frontier > before) toast("🖋️ עמוד " + D.frontier + " הושלם ונרשם במגילה", true);
-    else if (src !== "sw") toast("+" + n + " שורות · " + D.buffer + "/" + D.L + " בעמוד");
+    if (D.frontier > before) toast("🖋️ " + U().one + " " + D.frontier + " הושלם ונרשם", true);
+    else if (src !== "sw") toast("+" + n + " שורות" + (date && date !== todayISO() ? " ל־" + heDate(date) : " · " + D.buffer + "/" + D.L));
     render();
   },
 
@@ -916,87 +1401,123 @@ const app = {
     el.value = "";
   },
 
-  completeAmud(){
-    const D = derive();
-    this.addLines(D.L - D.buffer);
+  logForDate(){ hc.open("log"); },
+
+  askLinesFor(iso){
+    promptBox("כמה שורות נכתבו ב־" + heDate(iso) + "?", P().busyQuota, v => {
+      if (!v || v <= 0) return;
+      this.addLines(v, "back", iso);
+    });
   },
 
+  completeAmud(){ const D = derive(); this.addLines(D.L - D.buffer); },
+
   undoLast(){
-    if (!st.history.length) return;
-    const last = st.history[st.history.length - 1];
-    confirmBox("לבטל את הרישום האחרון (" + last.lines + " שורות)?", () => {
-      st.history.pop(); save(); toast("בוטל"); render();
+    const p = P();
+    const list = live(p);
+    if (!list.length) { toast("אין מה לבטל"); return; }
+    const last = list[list.length - 1];
+    confirmBox("לבטל את הרישום האחרון (" + last.lines + " שורות מ־" + heDate(last.date) + ")?", () => {
+      last.del = true; last.t = nowMs();
+      touch(); save(); toast("בוטל"); render();
     });
   },
 
   removeEntry(id){
-    const e = st.history.find(h => h.id === id);
+    const p = P();
+    const e = p.history.find(h => h.id === id);
     if (!e) return;
-    confirmBox("למחוק רישום של " + e.lines + " שורות מ־" + heDate(e.date) + "? העמודים יחושבו מחדש.", () => {
-      st.history = st.history.filter(h => h.id !== id);
-      save(); toast("נמחק והחשבון עודכן"); render();
+    confirmBox("למחוק רישום של " + e.lines + " שורות מ־" + heDate(e.date) + "? החישוב יתעדכן.", () => {
+      e.del = true; e.t = nowMs();
+      touch(); save(); toast("נמחק"); render();
     });
   },
 
   editEntry(id){
-    const e = st.history.find(h => h.id === id);
+    const p = P();
+    const e = p.history.find(h => h.id === id);
     if (!e) return;
     promptBox("עדכון מספר השורות ברישום מ־" + heDate(e.date) + ":", e.lines, v => {
       if (!v || v <= 0) return;
-      e.lines = v; save(); toast("עודכן"); render();
+      e.lines = v; e.t = nowMs();
+      touch(); save(); toast("עודכן"); render();
     });
   },
 
   tapBlock(i){
     const D = derive();
-    const isHole = D.holes.indexOf(i) !== -1;
-    if (isHole) {
-      confirmBox("עמוד " + i + " — להשלים אותו? הוא יסומן כנכתב במקומו.", () => {
-        st.holes = st.holes.filter(x => x !== i);
-        save(); toast("🖋️ עמוד " + i + " הושלם — החור נסתם", true); render();
-      });
-    } else if (i === D.frontier && D.frontier > 0) {
-      confirmBox("עמוד " + i + " הוא האחרון שנכתב. למחוק אותו ולהחזיר את הקולמוס לעמוד " + i + "?", () => {
-        st.baseWritten = Math.max(0, st.baseWritten - 1);
-        save(); toast("הקולמוס חזר לעמוד " + i); render();
-      });
-    } else if (i < D.frontier) {
-      confirmBox("למחוק את עמוד " + i + "? הוא יסומן כמחורר — לבן וריק — במקומו המדויק. (הקולמוס נשאר בעמוד " + (D.frontier + 1) + ")", () => {
-        st.holes.push(i);
-        st.holes.sort((a,b) => a - b);
-        save(); toast("עמוד " + i + " מחורר — ממתין להשלמה"); render();
-      });
-    } else if (i === D.frontier + 1) {
-      toast("עמוד " + i + " הוא הקולמוס — כאן כותבים עכשיו");
-    } else {
-      toast("עמוד " + i + " עוד לפניך — הקולמוס בעמוד " + (D.frontier + 1));
+    const p = D.p, one = U().one;
+    if (D.holeSet.has(i)) {
+      confirmBox(one + " " + i + " — להשלים אותו? הוא יסומן כנכתב במקומו.", () => {
+        p.holes = p.holes.filter(x => x !== i);
+        touch(); save(); toast("🖋️ " + one + " " + i + " הושלם — החור נסתם", true); render();
+      }, "כן, השלמתי");
+      return;
     }
+    if (i <= D.frontier) { ui.amudSheet(i, i === D.frontier); return; }
+    if (i === D.frontier + 1) toast(one + " " + i + " הוא הקולמוס — כאן כותבים עכשיו");
+    else toast(one + " " + i + " עוד לפניך — הקולמוס ב" + one + " " + (D.frontier + 1));
+  },
+
+  setStage(i, key){
+    const p = P();
+    const s = p.stages[i] || {};
+    s[key] = !s[key];
+    if (!s.a && !s.b && !s.pc) delete p.stages[i];
+    else p.stages[i] = s;
+    touch(); save();
+    ui.amudSheet(i, i === derive().frontier);
+    render();
+  },
+
+  makeHole(i){
+    const p = P();
+    confirmBox("למחוק את " + U().one + " " + i + "? הוא יסומן כמחורר במקומו המדויק.", () => {
+      if (p.holes.indexOf(i) === -1) p.holes.push(i);
+      p.holes.sort((a,b) => a - b);
+      delete p.stages[i];
+      touch(); save(); toast(U().one + " " + i + " מחורר — ממתין להשלמה"); render();
+    });
+  },
+
+  dropLast(i){
+    const p = P();
+    confirmBox(U().one + " " + i + " הוא האחרון שנכתב. להחזיר את הקולמוס אליו?", () => {
+      p.baseWritten = Math.max(0, p.baseWritten - 1);
+      touch(); save(); toast("הקולמוס חזר ל" + U().one + " " + i); render();
+    });
   },
 
   fillFirstHole(){
     const D = derive();
     if (!D.holes.length) return;
     const first = D.holes[0];
-    confirmBox("להשלים את עמוד " + first + " (החור הראשון)?", () => {
-      st.holes = st.holes.filter(x => x !== first);
-      save(); toast("🖋️ עמוד " + first + " הושלם — החור נסתם", true); render();
-    });
+    confirmBox("להשלים את " + U().one + " " + first + " (החור הראשון)?", () => {
+      const p = P();
+      p.holes = p.holes.filter(x => x !== first);
+      touch(); save(); toast("🖋️ " + U().one + " " + first + " הושלם", true); render();
+    }, "כן, השלמתי");
   },
 
-  resetAll(){
-    confirmBox("לאפס את כל הנתונים לגמרי? זה בלתי הפיך.", () => {
-      st = JSON.parse(JSON.stringify(DEFAULTS));
-      save(); toast("אופס — מתחילים נקי"); render();
+  resetProject(){
+    confirmBox("לאפס את הפרויקט \"" + P().name + "\"? כל הרישומים שלו יימחקו. שאר הפרויקטים לא ייפגעו.", () => {
+      const p = P();
+      const fresh = blankProject(p.type, p.name);
+      fresh.id = p.id;
+      st.projects = st.projects.map(x => x.id === p.id ? fresh : x);
+      touch(); save(); toast("הפרויקט אופס"); render();
     });
   }
 };
 
-/* ═══ stopwatch ═══ */
+/* ═══════════════════ שעון עצר ═══════════════════ */
 const sw = {
-  running: false, acc: 0, start: 0, lapAnchor: 0, beeped: false,
-  laps: [], interval: null, audio: null,
+  interval: null, audio: null, wake: null,
 
-  now(){ return this.acc + (this.running ? Date.now() - this.start : 0); },
+  s(){ return st.sw; },
+  now(){ const s = this.s(); return s.acc + (s.running ? nowMs() - s.startedAt : 0); },
+
+  persist(){ save({ sync:false }); },
 
   beep(double){
     try {
@@ -1016,138 +1537,481 @@ const sw = {
     } catch(e){}
   },
 
+  async lock(){
+    try { if (navigator.wakeLock && !this.wake) this.wake = await navigator.wakeLock.request("screen"); } catch(e){}
+  },
+  unlock(){ try { if (this.wake) { this.wake.release(); this.wake = null; } } catch(e){} },
+
   tick(){
+    const s = this.s();
     const total = this.now();
-    const lapMs = total - this.lapAnchor;
-    document.getElementById("swLap").textContent = fmt(lapMs);
-    document.getElementById("swTotal").textContent = fmt(total);
-    const thMs = (st.swThresholdMin || 2) * 60000;
+    const lapMs = total - s.lapAnchor;
+    const el = document.getElementById("swLap");
+    if (el) el.textContent = fmt(lapMs);
+    const tot = document.getElementById("swTotal");
+    if (tot) tot.textContent = fmt(total);
+    const thMs = (st.settings.swThresholdMin || 2) * 60000;
     const over = lapMs > thMs;
-    document.getElementById("swMain").className = "swMain" + (over && this.running ? " swOver" : "");
-    if (over && !this.beeped && this.running) { this.beeped = true; this.beep(true); }
+    const main = document.getElementById("swMain");
+    if (main) main.className = "swMain" + (over && s.running ? " swOver" : "");
+    if (over && !s.beeped && s.running) { s.beeped = true; this.beep(true); this.persist(); }
+  },
+
+  run(){
+    clearInterval(this.interval);
+    if (this.s().running) this.interval = setInterval(() => this.tick(), 250);
   },
 
   startPause(){
-    if (this.running) {
-      this.acc += Date.now() - this.start;
-      this.running = false;
-      clearInterval(this.interval);
-      document.getElementById("swStartBtn").textContent = "המשך";
-      document.getElementById("swStartBtn").className = "solid tall";
+    const s = this.s();
+    if (s.running) {
+      s.acc += nowMs() - s.startedAt;
+      s.running = false;
+      this.unlock();
     } else {
+      s.startedAt = nowMs();
+      s.running = true;
       if (!this.audio) this.beep(false);
-      this.start = Date.now();
-      this.running = true;
-      this.interval = setInterval(() => this.tick(), 200);
-      document.getElementById("swStartBtn").textContent = "השהה";
-      document.getElementById("swStartBtn").className = "ghost tall";
+      this.lock();
     }
-    document.getElementById("swLapBtn").disabled = false;
-    document.getElementById("swResetBtn").disabled = false;
+    this.persist();
+    this.run(); this.tick(); this.paint();
   },
 
   lap(){
+    const s = this.s();
     const total = this.now();
     if (total === 0) return;
-    const dur = total - this.lapAnchor;
-    this.lapAnchor = total;
-    const over = this.beeped;
-    this.beeped = false;
-    this.laps.unshift({ n: this.laps.length + 1, ms: dur, over });
-    this.renderLaps();
+    const dur = total - s.lapAnchor;
+    s.lapAnchor = total;
+    const over = s.beeped;
+    s.beeped = false;
+    s.laps.unshift({ n: s.laps.length + 1, ms: dur, over });
+    st.swStats.push({ date: todayISO(), ms: dur, over, hour: new Date().getHours() });
+    if (st.swStats.length > 3000) st.swStats = st.swStats.slice(-3000);
     app.addLines(1, "sw");
-    this.tick();
+    this.tick(); this.paint();
   },
 
   reset(){
     confirmBox("לאפס את השעון? שורות שכבר נרשמו ביומן נשארות.", () => {
+      const s = this.s();
       clearInterval(this.interval);
-      this.running = false; this.acc = 0; this.start = 0; this.lapAnchor = 0; this.beeped = false;
-      this.laps = [];
-      document.getElementById("swStartBtn").textContent = "התחל";
-      document.getElementById("swStartBtn").className = "solid tall";
-      document.getElementById("swLapBtn").disabled = true;
-      document.getElementById("swResetBtn").disabled = true;
-      this.tick();
-      this.renderLaps();
+      s.running = false; s.acc = 0; s.startedAt = 0; s.lapAnchor = 0; s.beeped = false; s.laps = [];
+      this.unlock(); this.persist();
+      this.tick(); this.paint();
     });
   },
 
-  renderLaps(){
-    document.getElementById("lapCount").textContent = this.laps.length + " שורות";
+  paint(){
+    const s = this.s();
+    const startBtn = document.getElementById("swStartBtn");
+    if (startBtn) {
+      startBtn.textContent = s.running ? "השהה" : (s.acc || s.laps.length ? "המשך" : "התחל");
+      startBtn.className = s.running ? "ghost tall" : "solid tall";
+    }
+    const has = s.running || s.acc > 0 || s.laps.length > 0;
+    const lapBtn = document.getElementById("swLapBtn");
+    const rstBtn = document.getElementById("swResetBtn");
+    if (lapBtn) lapBtn.disabled = !has;
+    if (rstBtn) rstBtn.disabled = !has;
+
+    document.getElementById("lapCount").textContent = s.laps.length + " שורות";
     const avgEl = document.getElementById("lapAvg");
-    if (this.laps.length > 1) {
-      const avg = this.laps.reduce((a,l) => a + l.ms, 0) / this.laps.length;
+    if (s.laps.length > 1) {
+      const avg = s.laps.reduce((a,l) => a + l.ms, 0) / s.laps.length;
       avgEl.textContent = "ממוצע " + fmt(avg) + " לשורה";
     } else avgEl.textContent = "";
+
     const list = document.getElementById("lapsList");
-    if (!this.laps.length) {
-      list.innerHTML = '<p class="hint">ההקפה הראשונה תופיע כאן — החדשה תמיד למעלה.</p>';
+    list.innerHTML = s.laps.length
+      ? s.laps.map(l =>
+          '<div class="histRow"><span class="histDate">שורה ' + l.n + '</span>' +
+          '<span class="histLines' + (l.over ? ' lapOver' : '') + '">' + fmt(l.ms) + '</span>' +
+          '<span class="grow"></span>' +
+          (l.over ? '<span class="lapOverTag">מעל הזמן</span>' : '') + '</div>').join("")
+      : '<p class="hint">ההקפה הראשונה תופיע כאן — החדשה תמיד למעלה.</p>';
+
+    this.stats();
+  },
+
+  stats(){
+    const all = st.swStats;
+    const grid = document.getElementById("swStatGrid");
+    if (!all.length) {
+      grid.innerHTML = '<p class="hint" style="grid-column:1/-1">עוד אין נתונים. כל הקפה בשעון נאספת לכאן.</p>';
+      document.getElementById("hourGrid").innerHTML = "";
       return;
     }
-    list.innerHTML = this.laps.map(l =>
-      '<div class="histRow"><span class="histDate">שורה ' + l.n + '</span>' +
-      '<span class="histLines' + (l.over ? ' lapOver' : '') + '">' + fmt(l.ms) + '</span>' +
-      '<span class="grow"></span>' +
-      (l.over ? '<span class="lapOverTag">מעל הזמן</span>' : '') +
-      '</div>'
-    ).join("");
+    const avg = all.reduce((a,l) => a + l.ms, 0) / all.length;
+    const best = all.reduce((m,l) => Math.min(m, l.ms), Infinity);
+    const overPct = Math.round(all.filter(l => l.over).length / all.length * 100);
+    const byHour = new Array(24).fill(0);
+    all.forEach(l => byHour[l.hour || 0]++);
+    let bestHour = 0;
+    byHour.forEach((v,i) => { if (v > byHour[bestHour]) bestHour = i; });
+
+    grid.innerHTML =
+      '<div class="stat"><b>' + all.length + '</b><span>שורות בשעון סה״כ</span></div>' +
+      '<div class="stat"><b>' + fmt(avg) + '</b><span>ממוצע לשורה</span></div>' +
+      '<div class="stat statGood"><b>' + fmt(best) + '</b><span>השורה המהירה ביותר</span></div>' +
+      '<div class="stat' + (overPct > 40 ? ' statGold' : '') + '"><b>' + overPct + '%</b><span>מעל זמן היעד</span></div>';
+
+    const mx = Math.max.apply(null, byHour.concat([1]));
+    document.getElementById("hourGrid").innerHTML = byHour.map((v,i) =>
+      '<div class="hourCol" title="' + i + ':00 · ' + v + ' שורות">' +
+      '<div class="hourBar' + (i === bestHour && v ? ' best' : '') + '" style="height:' + Math.max(v/mx*100, v ? 4 : 0) + '%"></div>' +
+      '<span class="hourLbl">' + (i % 3 === 0 ? i : "") + '</span></div>').join("");
+  },
+
+  boot(){
+    const s = this.s();
+    if (s.running && !s.startedAt) { s.running = false; }
+    this.run(); this.tick(); this.paint();
+    if (s.running) this.lock();
   }
 };
 
-/* ═══ מראה — מצב תצוגה + ערכת עיצוב ═══ */
+/* ═══════════════════ תזכורת ═══════════════════ */
+const remind = {
+  supported(){ return typeof Notification !== "undefined"; },
+
+  paint(){
+    const el = document.getElementById("notifySw");
+    if (el) el.classList.toggle("on", !!st.settings.notify);
+    const sub = document.getElementById("notifySub");
+    if (sub && !this.supported()) sub.textContent = "הדפדפן הזה לא תומך בהתראות — עדיין תופיע התראה בתוך האפליקציה";
+  },
+
+  async toggle(){
+    if (st.settings.notify) {
+      st.settings.notify = false; save(); this.paint(); toast("התזכורת כובתה"); return;
+    }
+    if (this.supported() && Notification.permission !== "granted") {
+      try {
+        const r = await Notification.requestPermission();
+        if (r !== "granted") { toast("ההתראות נחסמו בדפדפן — התזכורת תופיע רק בתוך האפליקציה"); }
+      } catch(e){}
+    }
+    st.settings.notify = true; save(); this.paint(); toast("תזכורת יומית פועלת");
+  },
+
+  check(){
+    const host = document.getElementById("bannerHost");
+    if (!host) return;
+    if (!st.settings.notify) { host.innerHTML = ""; return; }
+    const D = derive();
+    const h = new Date().getHours();
+    if (D.todayLines > 0 || h < (st.settings.reminderHour || 20)) { host.innerHTML = ""; return; }
+
+    host.innerHTML =
+      '<div class="banner"><span>עוד לא נרשמה שורה היום. ' + st.settings.reminderHour + ':00 עבר.</span>' +
+      '<button onclick="app.addLines(P().busyQuota)">+' + P().busyQuota + '</button></div>';
+
+    const today = todayISO();
+    if (st.settings.lastNotified !== today && this.supported() && Notification.permission === "granted") {
+      st.settings.lastNotified = today;
+      save({ sync:false });
+      try {
+        new Notification("הַסֵּפֶר", {
+          body: "עוד לא רשמת שורה היום. " + P().busyQuota + " שורות שומרות על הרצף.",
+          tag: "hasefer-daily", icon: "icon-192.png"
+        });
+      } catch(e){}
+    }
+  }
+};
+
+/* ═══════════════════ PWA ═══════════════════ */
+const pwa = {
+  prompt: null,
+
+  boot(){
+    if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      this.prompt = e;
+      const b = document.getElementById("installBtn");
+      if (b) b.classList.remove("hidden");
+      this.paint();
+    });
+    window.addEventListener("appinstalled", () => { this.prompt = null; this.paint(); });
+    this.paint();
+  },
+
+  installed(){
+    return window.matchMedia && window.matchMedia("(display-mode: standalone)").matches ||
+           window.navigator.standalone === true;
+  },
+
+  paint(){
+    const el = document.getElementById("installHint");
+    if (!el) return;
+    if (this.installed()) { el.textContent = "מותקן כאפליקציה. עובד גם בלי אינטרנט."; return; }
+    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    el.textContent = this.prompt
+      ? "אפשר להתקין כאפליקציה — נפתח בלי שורת כתובת ועובד אופליין."
+      : (ios ? "באייפון: כפתור השיתוף ← \"הוסף למסך הבית\". אז זה עובד כאפליקציה, גם בלי אינטרנט."
+             : "בכרום: תפריט הדפדפן ← \"התקן אפליקציה\" / \"הוסף למסך הבית\".");
+  },
+
+  async install(){
+    if (!this.prompt) { toast("השתמש בתפריט הדפדפן להתקנה"); return; }
+    this.prompt.prompt();
+    try { await this.prompt.userChoice; } catch(e){}
+    this.prompt = null;
+    document.getElementById("installBtn").classList.add("hidden");
+    this.paint();
+  }
+};
+
+/* ═══════════════════ דוח לשיתוף ═══════════════════ */
+const report = {
+  async open(){
+    const D = derive(), p = D.p, u = U();
+    const cs = getComputedStyle(document.documentElement);
+    const v = n => cs.getPropertyValue(n).trim() || "#000";
+    const S = 1080;
+    const c = document.createElement("canvas");
+    c.width = S; c.height = S;
+    const x = c.getContext("2d");
+    const fontFam = "Assistant, Heebo, sans-serif";
+
+    x.fillStyle = v("--bg"); x.fillRect(0, 0, S, S);
+    x.fillStyle = v("--panel");
+    x.beginPath();
+    if (x.roundRect) x.roundRect(60, 60, S-120, S-120, 32); else x.rect(60, 60, S-120, S-120);
+    x.fill();
+
+    x.direction = "rtl"; x.textAlign = "right";
+    x.fillStyle = v("--ink3");
+    x.font = "600 26px " + fontFam;
+    x.fillText("מעקב כתיבה · סת״ם", S-110, 165);
+    x.fillStyle = v("--ink");
+    x.font = "800 68px " + fontFam;
+    x.fillText(p.name, S-110, 245);
+
+    /* טבעת */
+    const cx = 300, cy = 500, R = 130;
+    x.lineWidth = 26; x.lineCap = "round";
+    x.strokeStyle = v("--line2");
+    x.beginPath(); x.arc(cx, cy, R, 0, Math.PI*2); x.stroke();
+    if (D.pct > 0) {
+      x.strokeStyle = v("--accent");
+      x.beginPath(); x.arc(cx, cy, R, -Math.PI/2, -Math.PI/2 + Math.PI*2*(D.pct/100)); x.stroke();
+    }
+    x.textAlign = "center";
+    x.fillStyle = v("--ink"); x.font = "800 76px " + fontFam;
+    x.fillText(D.pct + "%", cx, cy + 26);
+
+    /* מספרים */
+    x.textAlign = "right";
+    x.fillStyle = v("--ink"); x.font = "800 96px " + fontFam;
+    x.fillText(String(D.remaining), S-110, 470);
+    x.fillStyle = v("--ink3"); x.font = "600 30px " + fontFam;
+    x.fillText(u.many + " עד הסיום", S-110, 515);
+
+    x.fillStyle = v("--ink"); x.font = "700 44px " + fontFam;
+    x.fillText(D.frontier + " מתוך " + p.totalAmud, S-110, 600);
+    x.fillStyle = v("--ink3"); x.font = "600 26px " + fontFam;
+    x.fillText("נכתבו עד כה", S-110, 638);
+
+    /* פס */
+    const bx = 110, bw = S - 220, by = 720;
+    x.fillStyle = v("--line2");
+    x.beginPath();
+    if (x.roundRect) x.roundRect(bx, by, bw, 18, 9); else x.rect(bx, by, bw, 18);
+    x.fill();
+    x.fillStyle = v("--accent");
+    x.beginPath();
+    const fw = Math.max(bw * D.pct / 100, 18);
+    if (x.roundRect) x.roundRect(bx + bw - fw, by, fw, 18, 9); else x.rect(bx + bw - fw, by, fw, 18);
+    x.fill();
+
+    /* שורה תחתונה */
+    let line2 = "";
+    if (p.targetDate) {
+      const td = new Date(p.targetDate + "T00:00:00");
+      line2 = "יעד ההכנסה · " + (hebStr(td) || heDate(p.targetDate));
+    } else if (D.projection) {
+      line2 = "צפי סיום בקצב הנוכחי · " + (hebMonthYear(D.projection) || "");
+    }
+    x.fillStyle = v("--ink2"); x.font = "600 30px " + fontFam;
+    if (line2) x.fillText(line2, S-110, 820);
+    if (D.amudPerWeek > 0.05) {
+      x.fillStyle = v("--ink3"); x.font = "600 26px " + fontFam;
+      x.fillText("קצב נוכחי · " + D.amudPerWeek.toFixed(1) + " " + u.many + " לשבוע", S-110, 866);
+    }
+
+    x.textAlign = "center";
+    x.fillStyle = v("--ink3"); x.font = "600 24px " + fontFam;
+    x.fillText("הַסֵּפֶר · " + new Date().toLocaleDateString("he-IL"), S/2, S-105);
+
+    const blob = await new Promise(r => c.toBlob(r, "image/png"));
+    if (!blob) { toast("יצירת התמונה נכשלה"); return; }
+    const file = new File([blob], "hasefer-" + todayISO() + ".png", { type:"image/png" });
+    const url = URL.createObjectURL(blob);
+
+    openModal(
+      '<h3>דוח התקדמות</h3>' +
+      '<img src="' + url + '" alt="דוח התקדמות" style="width:100%;border-radius:9px;margin-bottom:14px;display:block">' +
+      '<div class="rowGap">' +
+      '<button class="solid grow" id="rShare" style="padding:12px;font-weight:700">שיתוף</button>' +
+      '<button class="ghost grow" id="rSave">שמירה</button>' +
+      '<button class="ghost" id="rClose">סגור</button></div>',
+      () => {
+        document.getElementById("rClose").onclick = () => { closeModal(); URL.revokeObjectURL(url); };
+        document.getElementById("rSave").onclick = () => {
+          const a = document.createElement("a");
+          a.href = url; a.download = file.name;
+          document.body.appendChild(a); a.click(); a.remove();
+        };
+        document.getElementById("rShare").onclick = async () => {
+          if (navigator.canShare && navigator.canShare({ files:[file] })) {
+            try { await navigator.share({ files:[file], title:"הַסֵּפֶר" }); } catch(e){}
+          } else toast("השיתוף לא נתמך כאן — אפשר לשמור ולשלוח");
+        };
+      });
+  }
+};
+
+/* ═══════════════════ ממשק — מודאלים ═══════════════════ */
+let histShown = 30;
+
+const ui = {
+  moreHistory(){ histShown += 60; render(); },
+
+  projects(){
+    const items = st.projects.map(p => {
+      const t = TYPES[p.type] || TYPES.torah;
+      const lines = live(p).reduce((a,h) => a + h.lines, 0);
+      const front = p.baseWritten + Math.floor(lines / (p.linesPerAmud || 42));
+      const pctv = Math.min(100, Math.round(front / Math.max(p.totalAmud,1) * 100));
+      return '<button class="modalItem' + (p.id === st.activeId ? ' on' : '') + '" data-p="' + esc(p.id) + '">' +
+        '<span>' + esc(p.name) + '<small>' + esc(t.label) + ' · ' + pctv + '% · ' + front + '/' + p.totalAmud + '</small></span>' +
+        (p.id === st.activeId ? '<span class="tick">✓</span>' : '') + '</button>';
+    }).join("");
+
+    openModal(
+      '<h3>הפרויקטים שלי</h3><div class="modalList">' + items + '</div>' +
+      '<div class="rowGap"><button class="solid grow" id="pNew" style="padding:12px;font-weight:700">פרויקט חדש</button>' +
+      '<button class="ghost grow" id="pClose">סגור</button></div>' +
+      (st.projects.length > 1 ? '<button class="dangerGhost wide" style="margin-top:10px;padding:10px" id="pDel">מחיקת הפרויקט הנוכחי</button>' : ''),
+      () => {
+        document.getElementById("pClose").onclick = closeModal;
+        document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
+          st.activeId = b.dataset.p;
+          histShown = 30;
+          st.updatedAt = nowMs();
+          save(); closeModal(); render();
+          toast("עברת ל" + P().name);
+        });
+        document.getElementById("pNew").onclick = () => this.newProject();
+        const del = document.getElementById("pDel");
+        if (del) del.onclick = () => {
+          const name = P().name;
+          closeModal();
+          confirmBox("למחוק לגמרי את \"" + name + "\" על כל הרישומים שלו?", () => {
+            st.projects = st.projects.filter(p => p.id !== st.activeId);
+            st.activeId = st.projects[0].id;
+            st.updatedAt = nowMs();
+            save(); render(); toast("נמחק");
+          }, "כן, מחק");
+        };
+      });
+  },
+
+  newProject(){
+    const opts = Object.keys(TYPES).map(k =>
+      '<button class="modalItem" data-t="' + k + '"><span>' + esc(TYPES[k].label) +
+      '<small>' + TYPES[k].totalAmud + ' ' + TYPES[k].many + ' · ' + TYPES[k].linesPerAmud + ' שורות</small></span></button>').join("");
+    openModal(
+      '<h3>פרויקט חדש</h3><p style="font-size:13.5px;color:var(--ink3)">אפשר לשנות כל מספר אחר כך בהגדרות.</p>' +
+      '<div class="modalList">' + opts + '</div>' +
+      '<button class="ghost wide" id="nCancel">ביטול</button>',
+      () => {
+        document.getElementById("nCancel").onclick = closeModal;
+        document.querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
+          const type = b.dataset.t;
+          closeModal();
+          promptBox("שם הפרויקט:", TYPES[type].label, name => {
+            const p = blankProject(type, name || TYPES[type].label);
+            st.projects.push(p);
+            st.activeId = p.id;
+            histShown = 30;
+            st.updatedAt = nowMs();
+            save(); render();
+            toast("נוצר: " + p.name, true);
+          }, "text");
+        });
+      });
+  },
+
+  amudSheet(i, isLast){
+    const p = P();
+    const s = p.stages[i] || {};
+    const one = U().one;
+    const row = (k, label, sub) =>
+      '<button class="modalItem' + (s[k] ? ' on' : '') + '" data-st="' + k + '">' +
+      '<span>' + label + '<small>' + sub + '</small></span>' +
+      '<span class="tick">' + (s[k] ? "✓" : "○") + '</span></button>';
+
+    openModal(
+      '<h3>' + one + " " + i + '</h3>' +
+      '<p style="font-size:13.5px;color:var(--ink3);margin-bottom:12px">שלבי ההגהה — לחיצה מסמנת או מבטלת.</p>' +
+      '<div class="modalList">' +
+      row("a", "הגהה ראשונה", "קריאה ראשונה אחרי הכתיבה") +
+      row("b", "הגהה שנייה", "קריאה חוזרת") +
+      row("pc", "מגיה מחשב", "סריקה ובדיקה ממוחשבת") +
+      '</div>' +
+      '<div class="rowGap">' +
+      '<button class="dangerGhost grow" style="padding:11px" id="aHole">סמן כמחורר</button>' +
+      (isLast ? '<button class="ghost grow" id="aDrop">מחק ' + one + ' אחרון</button>' : '') +
+      '<button class="ghost" id="aClose">סגור</button></div>',
+      () => {
+        document.getElementById("aClose").onclick = closeModal;
+        document.querySelectorAll("[data-st]").forEach(b => b.onclick = () => app.setStage(i, b.dataset.st));
+        document.getElementById("aHole").onclick = () => { closeModal(); app.makeHole(i); };
+        const dr = document.getElementById("aDrop");
+        if (dr) dr.onclick = () => { closeModal(); app.dropLast(i); };
+      });
+  }
+};
+
+/* ═══════════════════ מראה ═══════════════════ */
 const THEME_COLORS = {
   "panel-light":"#EDF0F1", "panel-dark":"#12171A",
   "ruled-light":"#FAFAF7", "ruled-dark":"#101214"
 };
 
 function applyLook(){
+  const g = st.settings;
   const r = document.documentElement;
-  if (st.theme === "light" || st.theme === "dark") r.setAttribute("data-theme", st.theme);
+  if (g.theme === "light" || g.theme === "dark") r.setAttribute("data-theme", g.theme);
   else r.removeAttribute("data-theme");
-  if (st.skin === "ruled") r.setAttribute("data-skin", "ruled");
+  if (g.skin === "ruled") r.setAttribute("data-skin", "ruled");
   else r.removeAttribute("data-skin");
 
   const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const dark = st.theme === "dark" || (st.theme === "auto" && sysDark);
+  const dark = g.theme === "dark" || (g.theme === "auto" && sysDark);
   const meta = document.getElementById("themeColor");
-  if (meta) meta.setAttribute("content", THEME_COLORS[(st.skin === "ruled" ? "ruled" : "panel") + (dark ? "-dark" : "-light")]);
+  if (meta) meta.setAttribute("content", THEME_COLORS[(g.skin === "ruled" ? "ruled" : "panel") + (dark ? "-dark" : "-light")]);
 
-  document.querySelectorAll("[data-theme-opt]").forEach(b =>
-    b.classList.toggle("on", b.dataset.themeOpt === st.theme));
-  document.querySelectorAll("[data-skin-opt]").forEach(b =>
-    b.classList.toggle("on", b.dataset.skinOpt === st.skin));
+  document.querySelectorAll("[data-theme-opt]").forEach(b => b.classList.toggle("on", b.dataset.themeOpt === g.theme));
+  document.querySelectorAll("[data-skin-opt]").forEach(b => b.classList.toggle("on", b.dataset.skinOpt === g.skin));
 }
 
-document.getElementById("themeSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-theme-opt]");
-  if (!b) return;
-  st.theme = b.dataset.themeOpt;
-  save(); applyLook();
-  toast(st.theme === "auto" ? "מצב תצוגה: לפי הטלפון" : (st.theme === "dark" ? "מצב כהה" : "מצב בהיר"));
-});
-
-document.getElementById("skinSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-skin-opt]");
-  if (!b) return;
-  st.skin = b.dataset.skinOpt;
-  save(); applyLook();
-  toast(st.skin === "ruled" ? "ערכת עיצוב: שרטוט" : "ערכת עיצוב: לוח מכשירים");
-});
-
-if (window.matchMedia) {
-  const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  const onChange = () => { if (st.theme === "auto") applyLook(); };
-  if (mq.addEventListener) mq.addEventListener("change", onChange);
-  else if (mq.addListener) mq.addListener(onChange);
-}
-
-/* ═══ render ═══ */
+/* ═══════════════════ ציור ═══════════════════ */
 function render(){
-  const D = derive();
   applyLook();
+  const D = derive(), p = D.p, u = U();
 
-  /* מצב עליון — צבע = מידע */
+  /* כותרת */
+  document.getElementById("projName").textContent = p.name;
+  document.getElementById("projType").textContent = u.label + " · " + (st.projects.length > 1 ? "החלפה" : "מעקב כתיבה");
+
   const pill = document.getElementById("statePill");
   if (D.lever) {
     document.getElementById("pct").textContent = D.lever.onTrack ? "בקצב" : "בפיגור";
@@ -1157,68 +2021,112 @@ function render(){
     pill.className = "pill";
   }
 
-  /* טבעת התקדמות */
+  /* טבעת */
   const RR = 24, CC = 2 * Math.PI * RR;
   document.getElementById("progRing").innerHTML =
-    '<svg width="60" height="60" viewBox="0 0 60 60" role="img" aria-label="' + D.pct + ' אחוז מהספר">' +
+    '<svg width="60" height="60" viewBox="0 0 60 60" role="img" aria-label="' + D.pct + ' אחוז">' +
     '<circle cx="30" cy="30" r="' + RR + '" fill="none" stroke="var(--line2)" stroke-width="6"/>' +
     '<circle cx="30" cy="30" r="' + RR + '" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"' +
-    ' stroke-dasharray="' + CC.toFixed(1) + '" stroke-dashoffset="' + (CC * (1 - D.pct / 100)).toFixed(1) + '"' +
+    ' stroke-dasharray="' + CC.toFixed(1) + '" stroke-dashoffset="' + (CC * (1 - D.pct/100)).toFixed(1) + '"' +
     ' transform="rotate(-90 30 30)"/>' +
-    '<text x="30" y="30" text-anchor="middle" dominant-baseline="central"' +
-    ' font-size="15" font-weight="700" fill="var(--ink)">' + D.pct + '%</text></svg><span>מהספר</span>';
+    '<text x="30" y="30" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="700" fill="var(--ink)">' +
+    D.pct + '%</text></svg><span>מהספר</span>';
+
+  /* גיבור */
   document.getElementById("remaining").textContent = D.remaining;
-  document.getElementById("remainingLbl").textContent = "עמודים עד הסיום" +
+  document.getElementById("remainingLbl").textContent = u.many + " עד הסיום" +
     (D.projection ? " · צפי " + (hebMonthYear(D.projection) || D.projection.toLocaleDateString("he-IL", {month:"short", year:"2-digit"})) : "");
   document.getElementById("holding").textContent = D.frontier + 1;
+  document.getElementById("holdingLbl").textContent = "אוחז ב" + u.one;
   document.getElementById("holesCount").textContent = D.holes.length;
+  document.getElementById("holesLbl").textContent = u.many + " מחוררים";
   document.getElementById("holesStat").className = "stat" + (D.holes.length ? " statGold" : "");
   document.getElementById("streak").textContent = D.streak;
   document.getElementById("streakStat").className = "stat" + (D.streak > 0 ? " statGood" : "");
   document.getElementById("todayLines").textContent = D.todayLines;
   document.getElementById("statusLine").textContent = D.status;
-  document.getElementById("curAmud").textContent = D.frontier + 1;
+
+  /* עמוד נוכחי */
+  document.getElementById("curAmudLbl").textContent = "ה" + u.one + " הנוכחי · " + (D.frontier + 1);
   document.getElementById("bufferTxt").textContent = D.buffer + "/" + D.L;
   document.getElementById("amudFill").style.width = (D.buffer / D.L * 100) + "%";
+  document.getElementById("completeBtn").textContent = "השלם " + u.one;
+  document.getElementById("busyBtn").textContent = "+" + p.busyQuota;
+  document.getElementById("busyBtn").onclick = () => app.addLines(p.busyQuota);
 
-  /* ספארקליין — 7 ימים אחרונים */
   const s7 = D.days.slice(-7);
-  const sMax = Math.max.apply(null, s7.map(x => x.lines).concat([st.busyQuota, 1]));
-  document.getElementById("spark").innerHTML = s7.map((d, i) =>
-    '<i class="' + (d.lines >= D.L ? "hi" : (i === s7.length - 1 ? "today" : "")) +
-    '" style="height:' + Math.max(d.lines / sMax * 100, 4) + '%" title="' + d.label + ' · ' + d.lines + ' שורות"></i>'
-  ).join("");
+  const sMax = Math.max.apply(null, s7.map(x => x.lines).concat([p.busyQuota, 1]));
+  document.getElementById("spark").innerHTML = s7.map((d,i) =>
+    '<i class="' + (d.lines >= D.L ? "hi" : (i === s7.length-1 ? "today" : "")) +
+    '" style="height:' + Math.max(d.lines/sMax*100, 4) + '%" title="' + d.label + ' · ' + d.lines + ' שורות"></i>').join("");
   document.getElementById("sparkAvg").textContent = "ממוצע " + Math.round(D.last7 / 7) + " שורות ליום";
-  document.getElementById("busyBtn").textContent = "+" + st.busyQuota;
-  document.getElementById("busyBtn").onclick = () => app.addLines(st.busyQuota);
 
-  const fh = document.getElementById("fillHoleWrap");
-  fh.innerHTML = D.holes.length
-    ? '<button class="gold" style="width:100%;margin-top:8px" onclick="app.fillFirstHole()">השלמתי את עמוד ' + D.holes[0] + ' — החור הראשון (' + D.holes.length + ' מחוררים)</button>'
+  document.getElementById("fillHoleWrap").innerHTML = D.holes.length
+    ? '<button class="gold wide" style="margin-top:8px" onclick="app.fillFirstHole()">השלמתי את ' + u.one + ' ' + D.holes[0] + ' — החור הראשון (' + D.holes.length + ' מחוררים)</button>'
     : "";
 
-  const holeSet = new Set(D.holes);
-  let grid = "";
-  for (let i = 1; i <= st.totalAmud; i++) {
-    let cls = "blk";
-    if (holeSet.has(i)) cls += " hole";
-    else if (i <= D.frontier) cls += " done";
-    else if (i === D.frontier + 1) cls += " current";
-    grid += '<button class="' + cls + '" data-i="' + i + '" aria-label="עמוד ' + i + '"></button>';
-  }
-  document.getElementById("scrollGrid").innerHTML = grid;
-  document.getElementById("scrollCount").textContent = D.frontier + " / " + st.totalAmud;
-  document.getElementById("holesList").textContent = D.holes.length ? "מחוררים כרגע: עמודים " + D.holes.join(", ") : "";
+  /* המגילה */
+  document.getElementById("scrollTitle").textContent = u.sheet ? "המגילה" : "המעקב";
+  document.getElementById("scrollCount").textContent = D.frontier + " / " + p.totalAmud;
+  document.getElementById("scrollHint").textContent =
+    "לחיצה על " + u.one + " שנכתב פותחת הגהה ומחיקה. לחיצה על מחורר — השלמה.";
 
-  /* lever */
-  const lb = document.getElementById("leverBox");
-  const note = document.getElementById("leverNote");
-  if (st.targetDate && D.lever) {
-    lb.innerHTML =
-      '<div class="leverGrid">' +
-      '<div class="stat"><b>' + D.lever.writeDays + '</b><span>ימי כתיבה נותרו (מתוך ' + D.lever.daysLeft + ' ימים)</span></div>' +
+  const per = p.amudPerYeria > 0 ? p.amudPerYeria : 0;
+  let grid = "", open = false, yn = 0;
+  for (let i = 1; i <= p.totalAmud; i++) {
+    if (per && (i - 1) % per === 0) {
+      if (open) grid += '</div></div>';
+      yn++;
+      grid += '<div class="yeria"><div class="yeriaBlocks">';
+      open = true;
+    }
+    let cls = "blk", stg = "";
+    if (D.holeSet.has(i)) cls += " hole";
+    else if (i <= D.frontier) {
+      cls += " done";
+      const s = p.stages[i] || {};
+      const n = (s.a ? 1 : 0) + (s.b ? 1 : 0) + (s.pc ? 1 : 0);
+      if (n) stg = ' data-st="' + n + '"';
+    }
+    else if (i === D.frontier + 1) cls += " current";
+    grid += '<button class="' + cls + '"' + stg + ' data-i="' + i + '" aria-label="' + u.one + ' ' + i + '"></button>';
+    if (per && (i % per === 0 || i === p.totalAmud)) {
+      grid += '</div><span class="yeriaNum">' + yn + '</span></div>';
+      open = false;
+    }
+  }
+  if (open) grid += '</div></div>';
+  document.getElementById("scrollGrid").innerHTML = grid;
+  document.getElementById("scrollGrid").style.gap = per ? "6px 5px" : "3px";
+
+  document.getElementById("scrollLegend").innerHTML =
+    '<span><i class="blk done"></i>נכתב</span>' +
+    '<span><i class="blk current"></i>הקולמוס</span>' +
+    '<span><i class="blk hole"></i>מחורר</span>' +
+    '<span><i class="blk done" data-st="3"></i>הוגה</span>' +
+    '<span><i class="blk"></i>ממתין</span>' +
+    (per ? '<span>קבוצה = ' + u.sheet + ' (' + per + ' ' + u.many + ')</span>' : '');
+
+  document.getElementById("holesList").textContent =
+    D.holes.length ? "מחוררים כרגע: " + D.holes.join(", ") : "";
+
+  /* הגהה */
+  const pf = D.proof;
+  document.getElementById("proofCount").textContent = pf.done + " / " + pf.eligible;
+  const pRow = (n, label, cls) =>
+    '<div class="stat' + (cls || "") + '"><b>' + n + '</b><span>' + label + '</span></div>';
+  document.getElementById("proofGrid").innerHTML =
+    pRow(pf.a, "הגהה ראשונה") + pRow(pf.b, "הגהה שנייה") +
+    pRow(pf.pc, "מגיה מחשב") +
+    pRow(pf.eligible - pf.done, "ממתינים להגהה", pf.eligible - pf.done > 0 ? " statGold" : " statGood");
+
+  /* מנוף */
+  const lb = document.getElementById("leverBox"), note = document.getElementById("leverNote");
+  if (p.targetDate && D.lever) {
+    lb.innerHTML = '<div class="leverGrid">' +
+      '<div class="stat"><b>' + D.lever.writeDays + '</b><span>ימי כתיבה נותרו (מתוך ' + D.lever.daysLeft + ')</span></div>' +
       '<div class="stat"><b>' + Math.ceil(D.lever.neededLinesPerWriteDay) + '</b><span>שורות ליום כתיבה</span></div>' +
-      '<div class="stat"><b>' + D.lever.neededPerWeek.toFixed(1) + '</b><span>עמודים לשבוע</span></div>' +
+      '<div class="stat"><b>' + D.lever.neededPerWeek.toFixed(1) + '</b><span>' + u.many + ' לשבוע</span></div>' +
       '<div class="stat ' + (D.lever.onTrack ? 'statGood' : 'statRed') + '"><b>' + (D.lever.onTrack ? 'בקצב' : 'מאחור') + '</b><span>מול המציאות</span></div>' +
       '</div>';
     note.textContent = "בניכוי שבתות, ראש השנה, יום כיפור, סוכות עד שמחת תורה, פסח (כולל חול המועד) ושבועות.";
@@ -1228,54 +2136,106 @@ function render(){
   }
 
   const db = document.getElementById("dateBtn");
-  if (st.targetDate) {
-    const td = new Date(st.targetDate + "T00:00:00");
-    db.innerHTML = '<b>' + esc(hebStr(td) || heDate(st.targetDate)) + '</b><small>' +
-      td.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" }) + ' · לחיצה לשינוי</small>';
-  } else {
-    db.innerHTML = '<b>בחירת תאריך יעד</b><small>לוח שנה עברי · לחיצה לפתיחה</small>';
-  }
+  if (p.targetDate) {
+    const td = new Date(p.targetDate + "T00:00:00");
+    db.innerHTML = '<b>' + esc(hebStr(td) || heDate(p.targetDate)) + '</b><small>' +
+      td.toLocaleDateString("he-IL", { day:"numeric", month:"long", year:"numeric" }) + ' · לחיצה לשינוי</small>';
+  } else db.innerHTML = '<b>בחירת תאריך יעד</b><small>לוח שנה עברי · לחיצה לפתיחה</small>';
 
-  /* chart */
+  /* גרף 14 יום */
   const maxBar = Math.max.apply(null, D.days.map(x => x.lines).concat([D.L]));
   document.getElementById("chart").innerHTML = D.days.map(d =>
     '<div class="barCol" title="' + d.lines + ' שורות">' +
     '<div class="bar' + (d.lines >= D.L ? ' barGold' : '') + '" style="height:' + (d.lines / maxBar * 100) + '%"></div>' +
-    '<span class="barLbl">' + d.label + '</span></div>'
-  ).join("");
+    '<span class="barLbl">' + d.label + '</span></div>').join("");
 
   document.getElementById("paceGrid").innerHTML =
     '<div class="stat"><b>' + D.last7 + '</b><span>שורות בשבוע</span></div>' +
-    '<div class="stat"><b>' + D.amudPerWeek.toFixed(1) + '</b><span>עמודים לשבוע</span></div>' +
+    '<div class="stat"><b>' + D.amudPerWeek.toFixed(1) + '</b><span>' + u.many + ' לשבוע</span></div>' +
     '<div class="stat"><b>' + (D.record.lines || "—") + '</b><span>שיא יומי' + (D.record.date ? ' · ' + heDate(D.record.date) : '') + '</span></div>' +
     '<div class="stat"><b>' + (D.projection ? esc(hebMonthYear(D.projection) || D.projection.toLocaleDateString("he-IL", {month:"short", year:"2-digit"})) : "—") + '</b><span>צפי סיום בקצב זה</span></div>';
 
-  /* history */
-  const recent = st.history.slice(-30).reverse();
-  document.getElementById("histList").innerHTML = recent.length
-    ? recent.map(h =>
-        '<div class="histRow"><span class="histDate">' + heDate(h.date) + (h.src === "sw" ? " ⏱" : "") + '</span>' +
-        '<span class="histLines">' + h.lines + ' שורות</span>' +
-        '<span class="grow"></span>' +
-        '<button class="ghost small" onclick="app.editEntry(\'' + h.id + '\')">ערוך</button>' +
-        '<button class="dangerGhost small" onclick="app.removeEntry(\'' + h.id + '\')">מחק</button>' +
-        '</div>'
-      ).join("")
-    : '<p class="hint">עוד אין רישומים. השורה הראשונה מחכה.</p>';
-  document.getElementById("histTotal").textContent =
-    "סה״כ " + D.totalLines + " שורות (" + (D.totalLines / D.L).toFixed(1) + " עמודים) מאז תחילת המעקב.";
+  /* heatmap */
+  renderHeat(D);
 
-  document.getElementById("set-totalAmud").value = st.totalAmud;
-  document.getElementById("set-baseWritten").value = st.baseWritten;
-  document.getElementById("set-linesPerAmud").value = st.linesPerAmud;
-  document.getElementById("set-busyQuota").value = st.busyQuota;
-  document.getElementById("threshold").value = st.swThresholdMin;
+  /* יומן */
+  const all = live(p).slice().sort((a,b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+  const shown = all.slice(0, histShown);
+  document.getElementById("histCount").textContent = all.length + " רישומים";
+  document.getElementById("histList").innerHTML = shown.length
+    ? shown.map(h =>
+        '<div class="histRow"><span class="histDate">' + heDate(h.date) +
+        (h.src === "sw" ? " ⏱" : h.src === "back" ? " ↩" : "") + '</span>' +
+        '<span class="histLines">' + h.lines + ' שורות</span><span class="grow"></span>' +
+        '<button class="ghost small" onclick="app.editEntry(\'' + esc(h.id) + '\')">ערוך</button>' +
+        '<button class="dangerGhost small" onclick="app.removeEntry(\'' + esc(h.id) + '\')">מחק</button></div>').join("")
+    : '<p class="hint">עוד אין רישומים. השורה הראשונה מחכה.</p>';
+  document.getElementById("histMore").classList.toggle("hidden", all.length <= histShown);
+  document.getElementById("histTotal").textContent =
+    "סה״כ " + D.totalLines + " שורות (" + (D.totalLines / D.L).toFixed(1) + " " + u.many + ") מאז תחילת המעקב.";
+
+  /* הגדרות */
+  document.getElementById("setProjName").textContent = u.label;
+  setVal("set-name", p.name);
+  setVal("set-totalAmud", p.totalAmud);
+  setVal("set-baseWritten", p.baseWritten);
+  setVal("set-linesPerAmud", p.linesPerAmud);
+  setVal("set-busyQuota", p.busyQuota);
+  setVal("set-amudPerYeria", p.amudPerYeria);
+  setVal("set-reminderHour", st.settings.reminderHour);
+  setVal("threshold", st.settings.swThresholdMin);
+  document.getElementById("lbl-totalAmud").childNodes[0].nodeValue = "סה״כ " + u.many;
+  document.getElementById("lbl-baseWritten").childNodes[0].nodeValue = u.many + " שנכתבו לפני המעקב";
+  document.getElementById("lbl-yeria").childNodes[0].nodeValue = u.sheet ? u.many + " ב" + u.sheet : "גודל קבוצה בתצוגה";
+  document.getElementById("autoSyncSw").classList.toggle("on", !!st.sync.auto);
 
   document.getElementById("swHint").textContent =
-    "כל הקפה נרשמת מיד כשורה אמיתית ביומן. עוד " + (D.L - D.buffer) + " שורות — והעמוד נסגר במגילה אוטומטית. איפוס השעון לא מוחק שורות שכבר נרשמו.";
+    "כל הקפה נרשמת מיד כשורה אמיתית ביומן. עוד " + (D.L - D.buffer) + " שורות — וה" + u.one +
+    " נסגר אוטומטית. המסך יישאר דלוק בזמן שהשעון רץ, והזמן שורד רענון.";
+
+  gh.refresh();
+  remind.paint();
+  remind.check();
+  pwa.paint();
+  sw.paint();
 }
 
-/* ═══ events ═══ */
+function setVal(id, v){
+  const el = document.getElementById(id);
+  if (el && document.activeElement !== el) el.value = v;
+}
+
+function renderHeat(D){
+  const host = document.getElementById("heat");
+  const today = atMidnight(new Date());
+  const start = new Date(today);
+  start.setDate(start.getDate() - 364);
+  start.setDate(start.getDate() - start.getDay());   /* יישור לתחילת שבוע */
+  const L = D.L;
+  let html = "", total = 0, activeDays = 0;
+  let days = 0;
+  const cur = new Date(start);
+  while (cur <= today || cur.getDay() !== 0) {
+    if (days % 7 === 0) html += (days ? '</div>' : '') + '<div class="heatCol">';
+    const iso = isoOf(cur);
+    const lines = D.logs[iso] || 0;
+    if (cur > today) html += '<i class="heatCell off"></i>';
+    else {
+      total += lines;
+      if (lines) activeDays++;
+      const lvl = !lines ? 0 : lines >= L ? 4 : lines >= L*0.6 ? 3 : lines >= L*0.25 ? 2 : 1;
+      html += '<i class="heatCell" data-l="' + lvl + '" title="' + heDate(iso) + ' · ' + lines + ' שורות"></i>';
+    }
+    cur.setDate(cur.getDate() + 1);
+    days++;
+    if (days > 380) break;
+  }
+  html += '</div>';
+  host.innerHTML = html;
+  document.getElementById("heatTotal").textContent = activeDays + " ימי כתיבה · " + total + " שורות";
+}
+
+/* ═══════════════════ אירועים ═══════════════════ */
 document.getElementById("scrollGrid").addEventListener("click", e => {
   const b = e.target.closest("[data-i]");
   if (b) app.tapBlock(parseInt(b.dataset.i, 10));
@@ -1288,19 +2248,89 @@ document.querySelectorAll(".tab").forEach(t => {
     ["main","sw","history","settings"].forEach(name => {
       document.getElementById("tab-" + name).classList.toggle("hidden", name !== t.dataset.tab);
     });
+    window.scrollTo(0, 0);
   });
 });
 
-document.getElementById("threshold").addEventListener("change", e => { st.swThresholdMin = parseFloat(e.target.value) || 2; save(); });
-[["set-totalAmud","totalAmud"],["set-baseWritten","baseWritten"],["set-linesPerAmud","linesPerAmud"],["set-busyQuota","busyQuota"]].forEach(pair => {
+document.getElementById("themeSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-theme-opt]");
+  if (!b) return;
+  st.settings.theme = b.dataset.themeOpt;
+  st.updatedAt = nowMs(); save(); applyLook();
+  toast(st.settings.theme === "auto" ? "מצב תצוגה: לפי הטלפון" : (st.settings.theme === "dark" ? "מצב כהה" : "מצב בהיר"));
+});
+
+document.getElementById("skinSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-skin-opt]");
+  if (!b) return;
+  st.settings.skin = b.dataset.skinOpt;
+  st.updatedAt = nowMs(); save(); applyLook();
+  toast(st.settings.skin === "ruled" ? "ערכת עיצוב: שרטוט" : "ערכת עיצוב: לוח מכשירים");
+});
+
+document.getElementById("threshold").addEventListener("change", e => {
+  st.settings.swThresholdMin = parseFloat(e.target.value) || 2;
+  st.updatedAt = nowMs(); save();
+});
+document.getElementById("set-reminderHour").addEventListener("change", e => {
+  let v = parseInt(e.target.value, 10);
+  if (isNaN(v) || v < 0 || v > 23) v = 20;
+  st.settings.reminderHour = v;
+  e.target.value = v;
+  st.updatedAt = nowMs(); save(); remind.check();
+});
+document.getElementById("set-name").addEventListener("change", e => {
+  const v = e.target.value.trim();
+  if (!v) { e.target.value = P().name; return; }
+  P().name = v; touch(); save(); render();
+});
+
+[["set-totalAmud","totalAmud",1],["set-baseWritten","baseWritten",0],
+ ["set-linesPerAmud","linesPerAmud",1],["set-busyQuota","busyQuota",1],
+ ["set-amudPerYeria","amudPerYeria",0]].forEach(pair => {
   document.getElementById(pair[0]).addEventListener("change", e => {
     const v = parseInt(e.target.value, 10);
-    if (!isNaN(v) && v >= 0) { st[pair[1]] = v || (pair[1] === "linesPerAmud" ? 42 : v); save(); render(); }
+    const p = P();
+    if (isNaN(v) || v < pair[2]) { e.target.value = p[pair[1]]; return; }
+    p[pair[1]] = v;
+    touch(); save(); render();
   });
 });
-document.getElementById("customLines").addEventListener("keydown", e => { if (e.key === "Enter") app.addCustom(); });
 
+document.getElementById("customLines").addEventListener("keydown", e => { if (e.key === "Enter") app.addCustom(); });
+document.getElementById("importFile").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0];
+  if (f) backup.load(f);
+  e.target.value = "";
+});
+
+if (window.matchMedia) {
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onChange = () => { if (st.settings.theme === "auto") applyLook(); };
+  if (mq.addEventListener) mq.addEventListener("change", onChange);
+  else if (mq.addListener) mq.addListener(onChange);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (gh.dirty && gh.ready() && st.sync.auto) gh.push(true);
+  } else {
+    sw.tick();
+    if (st.sw.running) sw.lock();
+    remind.check();
+    if (gh.ready() && st.sync.auto) gh.pull(true);
+  }
+});
+window.addEventListener("beforeunload", () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e){} });
+
+/* ═══════════════════ הפעלה ═══════════════════ */
+/* נועל את המצב (כולל המרה מהמבנה הישן) כבר בטעינה הראשונה */
+try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e){}
 render();
+sw.boot();
+pwa.boot();
+if (gh.ready()) gh.pull(true);
+setInterval(() => gh.refresh(), 60000);
 </script>
 </body>
 </html>
