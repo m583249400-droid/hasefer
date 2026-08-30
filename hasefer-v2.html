@@ -652,8 +652,16 @@ button:disabled{opacity:.4;cursor:default}
         <label class="field">שורות בעמוד<input class="inp" type="number" inputmode="numeric" id="set-linesPerAmud"></label>
         <label class="field">מכסת יום עומס<input class="inp" type="number" inputmode="numeric" id="set-busyQuota"></label>
         <label class="field" id="lbl-yeria">עמודים ביריעה<input class="inp" type="number" inputmode="numeric" id="set-amudPerYeria"></label>
+        <label class="field" id="lbl-yeriaOv" style="grid-column:1/-1">יריעות חריגות
+          <input class="inp" type="text" id="set-yeriaOverrides" placeholder="1:3, 61:3, 62:3">
+        </label>
       </div>
-      <p class="hint" style="margin-top:12px">"עמודים ביריעה" — 0 מבטל את חלוקת היריעות בתצוגת המגילה.</p>
+      <p class="hint" style="margin-top:12px">
+        "עמודים ביריעה" — הגודל הרגיל. 0 מבטל את חלוקת היריעות.<br>
+        "יריעות חריגות" — יריעות שגודלן שונה, בפורמט <b dir="ltr">מספר יריעה:עמודים</b>, מופרד בפסיקים.
+        לדוגמה <b dir="ltr">1:3, 61:3, 62:3</b> — היריעה הראשונה והשתיים האחרונות בנות 3 עמודים.
+      </p>
+      <p class="hint" id="yeriaSummary" style="margin-top:6px"></p>
       <div class="rowWrap" style="margin-top:14px">
         <button class="ghost grow" onclick="ui.projects()">החלפת פרויקט…</button>
         <button class="dangerGhost grow" style="padding:10px 12px" onclick="app.resetProject()">איפוס הפרויקט</button>
@@ -682,10 +690,11 @@ const OLD_KEY = "sefer-torah-html-v1";
 const TOKEN_KEY = "sefer-gh-token";   /* לעולם לא נכלל בגיבוי ולא נשלח לגיטהאב */
 
 const TYPES = {
-  torah:   { label:"ספר תורה", one:"עמוד",  many:"עמודים",  sheet:"יריעה", totalAmud:245, linesPerAmud:42, amudPerYeria:4 },
-  megila:  { label:"מגילה",    one:"עמודה", many:"עמודות",  sheet:"יריעה", totalAmud:11,  linesPerAmud:11, amudPerYeria:0 },
-  tefilin: { label:"תפילין",   one:"פרשה",  many:"פרשיות",  sheet:"",      totalAmud:8,   linesPerAmud:7,  amudPerYeria:0 },
-  mezuza:  { label:"מזוזות",   one:"מזוזה", many:"מזוזות",  sheet:"",      totalAmud:10,  linesPerAmud:22, amudPerYeria:0 }
+  /* yeriaOverrides — יריעות שגודלן חורג מהרגיל, לפי מספר היריעה */
+  torah:   { label:"ספר תורה", one:"עמוד",  many:"עמודים",  sheet:"יריעה", sheets:"יריעות", totalAmud:245, linesPerAmud:42, amudPerYeria:4, yeriaOverrides:{ "1":3, "61":3, "62":3 } },
+  megila:  { label:"מגילה",    one:"עמודה", many:"עמודות",  sheet:"יריעה", sheets:"יריעות", totalAmud:11,  linesPerAmud:11, amudPerYeria:0, yeriaOverrides:{} },
+  tefilin: { label:"תפילין",   one:"פרשה",  many:"פרשיות",  sheet:"", sheets:"", totalAmud:8,   linesPerAmud:7,  amudPerYeria:0, yeriaOverrides:{} },
+  mezuza:  { label:"מזוזות",   one:"מזוזה", many:"מזוזות",  sheet:"", sheets:"", totalAmud:10,  linesPerAmud:22, amudPerYeria:0, yeriaOverrides:{} }
 };
 
 const nowMs = () => Date.now();
@@ -696,7 +705,9 @@ function blankProject(type, name){
   return {
     id: uid("p"), name: name || t.label, type: type || "torah",
     totalAmud: t.totalAmud, baseWritten: 0, linesPerAmud: t.linesPerAmud,
-    amudPerYeria: t.amudPerYeria, busyQuota: 10,
+    amudPerYeria: t.amudPerYeria,
+    yeriaOverrides: JSON.parse(JSON.stringify(t.yeriaOverrides || {})),
+    busyQuota: 10,
     targetDate: "", holes: [], stages: {}, history: [], updatedAt: nowMs()
   };
 }
@@ -743,6 +754,9 @@ function normalize(s){
   s.projects = s.projects.map(p => Object.assign({}, blankProject(p.type, p.name), p, {
     holes: Array.isArray(p.holes) ? p.holes : [],
     stages: p.stages && typeof p.stages === "object" ? p.stages : {},
+    yeriaOverrides: p.yeriaOverrides && typeof p.yeriaOverrides === "object"
+      ? p.yeriaOverrides
+      : JSON.parse(JSON.stringify(((TYPES[p.type] || TYPES.torah).yeriaOverrides) || {})),
     history: Array.isArray(p.history) ? p.history : []
   }));
   if (!s.projects.some(p => p.id === s.activeId)) s.activeId = s.projects[0].id;
@@ -847,6 +861,40 @@ function writingDaysUntil(targetISO){
   let d = atMidnight(new Date()), count = 0, guard = 0;
   while (d < t && guard < 1500) { if (!noWriteDay(d)) count++; d.setDate(d.getDate()+1); guard++; }
   return count;
+}
+
+/* חלוקה ליריעות: גודל אחיד, למעט יריעות שהוגדרו כחריגות */
+function yeriaPlan(p){
+  const def = p.amudPerYeria > 0 ? p.amudPerYeria : 0;
+  if (!def) return null;
+  const ov = p.yeriaOverrides || {};
+  const plan = [];
+  let placed = 0, n = 0;
+  while (placed < p.totalAmud && n < 5000) {
+    n++;
+    let size = parseInt(ov[n], 10);
+    if (!(size > 0)) size = def;
+    if (placed + size > p.totalAmud) size = p.totalAmud - placed;
+    plan.push({ n, from: placed + 1, size });
+    placed += size;
+  }
+  return plan;
+}
+
+function yeriaOverridesText(p){
+  const ov = p.yeriaOverrides || {};
+  return Object.keys(ov)
+    .map(Number).filter(n => n > 0).sort((a,b) => a - b)
+    .map(n => n + ":" + ov[n]).join(", ");
+}
+
+function parseYeriaOverrides(txt){
+  const out = {};
+  String(txt || "").split(/[,;\n]/).forEach(part => {
+    const m = part.trim().match(/^(\d+)\s*[:=\-]\s*(\d+)$/);
+    if (m && +m[1] > 0 && +m[2] > 0) out[m[1]] = +m[2];
+  });
+  return out;
 }
 
 /* ═══════════════════ חישובים ═══════════════════ */
@@ -2071,15 +2119,8 @@ function render(){
   document.getElementById("scrollHint").textContent =
     "לחיצה על " + u.one + " שנכתב פותחת הגהה ומחיקה. לחיצה על מחורר — השלמה.";
 
-  const per = p.amudPerYeria > 0 ? p.amudPerYeria : 0;
-  let grid = "", open = false, yn = 0;
-  for (let i = 1; i <= p.totalAmud; i++) {
-    if (per && (i - 1) % per === 0) {
-      if (open) grid += '</div></div>';
-      yn++;
-      grid += '<div class="yeria"><div class="yeriaBlocks">';
-      open = true;
-    }
+  const plan = yeriaPlan(p);
+  const blockHtml = i => {
     let cls = "blk", stg = "";
     if (D.holeSet.has(i)) cls += " hole";
     else if (i <= D.frontier) {
@@ -2089,15 +2130,23 @@ function render(){
       if (n) stg = ' data-st="' + n + '"';
     }
     else if (i === D.frontier + 1) cls += " current";
-    grid += '<button class="' + cls + '"' + stg + ' data-i="' + i + '" aria-label="' + u.one + ' ' + i + '"></button>';
-    if (per && (i % per === 0 || i === p.totalAmud)) {
-      grid += '</div><span class="yeriaNum">' + yn + '</span></div>';
-      open = false;
+    return '<button class="' + cls + '"' + stg + ' data-i="' + i + '" aria-label="' +
+           u.one + ' ' + i + '"></button>';
+  };
+
+  let grid = "";
+  if (plan) {
+    for (const y of plan) {
+      grid += '<div class="yeria" title="' + u.sheet + ' ' + y.n + ' · ' + u.many + ' ' +
+              y.from + '–' + (y.from + y.size - 1) + '"><div class="yeriaBlocks">';
+      for (let i = y.from; i < y.from + y.size; i++) grid += blockHtml(i);
+      grid += '</div><span class="yeriaNum">' + y.n + '</span></div>';
     }
+  } else {
+    for (let i = 1; i <= p.totalAmud; i++) grid += blockHtml(i);
   }
-  if (open) grid += '</div></div>';
   document.getElementById("scrollGrid").innerHTML = grid;
-  document.getElementById("scrollGrid").style.gap = per ? "6px 5px" : "3px";
+  document.getElementById("scrollGrid").style.gap = plan ? "6px 5px" : "3px";
 
   document.getElementById("scrollLegend").innerHTML =
     '<span><i class="blk done"></i>נכתב</span>' +
@@ -2105,7 +2154,9 @@ function render(){
     '<span><i class="blk hole"></i>מחורר</span>' +
     '<span><i class="blk done" data-st="3"></i>הוגה</span>' +
     '<span><i class="blk"></i>ממתין</span>' +
-    (per ? '<span>קבוצה = ' + u.sheet + ' (' + per + ' ' + u.many + ')</span>' : '');
+    (plan ? '<span>' + plan.length + ' ' + (u.sheets || u.sheet) + ' · ' + p.amudPerYeria + ' ' + u.many +
+            ' בכל אחת' + (yeriaOverridesText(p) ? ' · חריגות: ' + esc(yeriaOverridesText(p)) : '') +
+            '</span>' : '');
 
   document.getElementById("holesList").textContent =
     D.holes.length ? "מחוררים כרגע: " + D.holes.join(", ") : "";
@@ -2182,6 +2233,16 @@ function render(){
   setVal("set-linesPerAmud", p.linesPerAmud);
   setVal("set-busyQuota", p.busyQuota);
   setVal("set-amudPerYeria", p.amudPerYeria);
+  setVal("set-yeriaOverrides", yeriaOverridesText(p));
+  const ySum = document.getElementById("yeriaSummary");
+  if (ySum) {
+    if (!plan) ySum.textContent = "";
+    else {
+      const sum = plan.reduce((a,y) => a + y.size, 0);
+      ySum.textContent = "כרגע: " + plan.length + " " + (u.sheets || u.sheet) + ", " + sum + " " + u.many +
+        (sum !== p.totalAmud ? " — לא תואם לסה״כ (" + p.totalAmud + ")" : " — תואם לסה״כ");
+    }
+  }
   setVal("set-reminderHour", st.settings.reminderHour);
   setVal("threshold", st.settings.swThresholdMin);
   document.getElementById("lbl-totalAmud").childNodes[0].nodeValue = "סה״כ " + u.many;
@@ -2295,6 +2356,11 @@ document.getElementById("set-name").addEventListener("change", e => {
     p[pair[1]] = v;
     touch(); save(); render();
   });
+});
+
+document.getElementById("set-yeriaOverrides").addEventListener("change", e => {
+  P().yeriaOverrides = parseYeriaOverrides(e.target.value);
+  touch(); save(); render();
 });
 
 document.getElementById("customLines").addEventListener("keydown", e => { if (e.key === "Enter") app.addCustom(); });
