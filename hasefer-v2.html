@@ -1640,6 +1640,7 @@ const sw = {
     const main = document.getElementById("swMain");
     if (main) main.className = "swMain" + (over && s.running ? " swOver" : "");
     if (over && !s.beeped && s.running) { s.beeped = true; this.beep(true); this.persist(); }
+    if (s.running) checkDayRollover();
   },
 
   run(){
@@ -2089,7 +2090,18 @@ function applyLook(){
 }
 
 /* ═══════════════════ ציור ═══════════════════ */
+/* היום שהמסך מצייר כרגע. render מעדכן אותו, checkDayRollover משווה אליו. */
+let shownDay = todayISO();
+
+/* מצייר מחדש רק כשהתאריך באמת התחלף. לא נוגע בשעון, בהקפות ולא בהיסטוריה. */
+function checkDayRollover(){
+  if (todayISO() === shownDay) return false;
+  render();
+  return true;
+}
+
 function render(){
+  shownDay = todayISO();
   applyLook();
   const D = derive(), p = D.p, u = U();
 
@@ -2424,10 +2436,13 @@ document.addEventListener("visibilitychange", () => {
   } else {
     sw.tick();
     if (st.sw.running) sw.lock();
+    checkDayRollover();
     remind.check();
     if (gh.ready() && st.sync.auto) gh.pull(true);
   }
 });
+/* חזרה מהמטמון האחורי (ספארי/אייפון) — גם שם לבדוק אם התחלף היום */
+window.addEventListener("pageshow", () => { checkDayRollover(); });
 window.addEventListener("beforeunload", () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e){} });
 
 /* ═══════════════════ הפעלה ═══════════════════ */
@@ -2437,7 +2452,7 @@ render();
 sw.boot();
 pwa.boot();
 if (gh.ready()) gh.pull(true);
-setInterval(() => gh.refresh(), 60000);
+setInterval(() => { checkDayRollover(); gh.refresh(); }, 60000);
 </script>
 </body>
 </html>
