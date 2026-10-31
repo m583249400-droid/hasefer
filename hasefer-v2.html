@@ -628,6 +628,14 @@ button:disabled{opacity:.4;cursor:default}
     </section>
 
     <section class="card">
+      <h2 class="h2">יום הכתיבה</h2>
+      <label class="field">סוף היום · שעה
+        <input class="inp small" type="number" min="0" max="12" inputmode="numeric" id="set-dayStartHour">
+      </label>
+      <p class="hint" id="dayStartHint" style="margin-top:10px"></p>
+    </section>
+
+    <section class="card">
       <h2 class="h2">תזכורת</h2>
       <div class="switchRow">
         <div><p>תזכורת יומית</p><small id="notifySub">מתריעה כשפותחים את האפליקציה אחרי השעה שנקבעה ועוד לא נרשם כלום</small></div>
@@ -716,7 +724,7 @@ function freshState(){
   const p = blankProject("torah", "ספר תורה");
   return {
     v: 2, activeId: p.id, projects: [p],
-    settings: { theme:"auto", skin:"panel", swThresholdMin:2, reminderHour:20, notify:false, lastNotified:"" },
+    settings: { theme:"auto", skin:"panel", swThresholdMin:2, reminderHour:20, notify:false, lastNotified:"", dayStartHour:2 },
     swStats: [],
     sw: { running:false, acc:0, startedAt:0, lapAnchor:0, beeped:false, laps:[] },
     sync: { repo:"", branch:"main", path:"sefer-data.json", sha:"", lastSync:0, auto:true },
@@ -796,7 +804,21 @@ function setFooter(txt){
 
 /* ═══════════════════ עזרים ═══════════════════ */
 const isoOf = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-const todayISO = () => isoOf(new Date());
+
+/* סוף היום: שעה שבה מתחלף יום הכתיבה. 2 = מה שנכתב עד 02:00 שייך ליום הקודם. */
+function dayStartHour(){
+  const h = st && st.settings ? st.settings.dayStartHour : 2;
+  return (typeof h === "number" && h >= 0 && h <= 12) ? h : 2;
+}
+/* יום הכתיבה של רגע נתון — זה מה ש"היום" מתכוון אליו בכל האפליקציה */
+function dayOf(ms){
+  const x = new Date(ms === undefined ? Date.now() : ms);
+  x.setHours(x.getHours() - dayStartHour());
+  return isoOf(x);
+}
+const todayISO = () => dayOf();
+/* תחילת יום הכתיבה הנוכחי, כאובייקט Date בחצות הקלנדרית שלו */
+const todayDate = () => new Date(todayISO() + "T00:00:00");
 const heDate = s => new Date(s + "T00:00:00").toLocaleDateString("he-IL", {day:"numeric", month:"short"});
 const fmt = ms => { const t = Math.floor(ms/1000); return String(Math.floor(t/60)).padStart(2,"0") + ":" + String(t%60).padStart(2,"0"); };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -914,13 +936,13 @@ function derive(){
   const todayLines = logs[todayISO()] || 0;
 
   let streak = 0;
-  const d = new Date();
+  const d = todayDate();
   if (!logs[isoOf(d)]) d.setDate(d.getDate() - 1);
   while (logs[isoOf(d)] > 0) { streak++; d.setDate(d.getDate() - 1); }
 
   const days = []; let last7 = 0;
   for (let i = 13; i >= 0; i--) {
-    const dd = new Date(); dd.setDate(dd.getDate() - i);
+    const dd = todayDate(); dd.setDate(dd.getDate() - i);
     const lines = logs[isoOf(dd)] || 0;
     if (i <= 6) last7 += lines;
     days.push({ iso: isoOf(dd), lines, label: dd.getDate() });
@@ -1356,7 +1378,7 @@ const hc = {
     const p = P();
     const isTarget = this.mode === "target";
     const days = this.monthDays(this.cursor);
-    const today = atMidnight(new Date());
+    const today = todayDate();
     const selISO = isTarget ? p.targetDate : "";
     const h0 = hInfo(days[0]);
     const title = (HEB_MONTHS[h0.month] || h0.month) + " " + gYear(h0.year);
@@ -2297,6 +2319,15 @@ function render(){
     }
   }
   setVal("set-reminderHour", st.settings.reminderHour);
+  setVal("set-dayStartHour", dayStartHour());
+  const dsHint = document.getElementById("dayStartHint");
+  if (dsHint) {
+    const hh = dayStartHour();
+    dsHint.textContent = hh === 0
+      ? "היום מתחלף בחצות. כרגע סופרים ליום " + heDate(todayISO()) + "."
+      : "מה שנכתב עד " + String(hh).padStart(2,"0") + ":00 נספר ליום הקודם. כרגע סופרים ליום " +
+        heDate(todayISO()) + ".";
+  }
   setVal("threshold", st.settings.swThresholdMin);
   document.getElementById("lbl-totalAmud").childNodes[0].nodeValue = "סה״כ " + u.many;
   document.getElementById("lbl-baseWritten").childNodes[0].nodeValue = u.many + " שנכתבו לפני המעקב";
@@ -2321,7 +2352,7 @@ function setVal(id, v){
 
 function renderHeat(D){
   const host = document.getElementById("heat");
-  const today = atMidnight(new Date());
+  const today = todayDate();
   const start = new Date(today);
   start.setDate(start.getDate() - 364);
   start.setDate(start.getDate() - start.getDay());   /* יישור לתחילת שבוע */
@@ -2393,6 +2424,16 @@ document.getElementById("set-reminderHour").addEventListener("change", e => {
   e.target.value = v;
   st.updatedAt = nowMs(); save(); remind.check();
 });
+document.getElementById("set-dayStartHour").addEventListener("change", e => {
+  let v = parseInt(e.target.value, 10);
+  if (isNaN(v) || v < 0 || v > 12) v = 2;
+  st.settings.dayStartHour = v;
+  e.target.value = v;
+  st.updatedAt = nowMs();
+  save(); render();
+  toast(v === 0 ? "היום מתחלף בחצות" : "היום מתחלף ב־" + String(v).padStart(2,"0") + ":00");
+});
+
 document.getElementById("set-name").addEventListener("change", e => {
   const v = e.target.value.trim();
   if (!v) { e.target.value = P().name; return; }
