@@ -1021,8 +1021,10 @@ function promptBox(msg, initial, onOk, type){
 
 /* ═══════════════════ גיבוי לקובץ ═══════════════════ */
 function payload(){
+  /* sw נכלל כדי שאפשר יהיה לקרוא מרחוק אם השעון רץ.
+     במשיכה מגיטהאב המצב המקומי תמיד גובר — ראו gh.pull. */
   return { v:2, activeId: st.activeId, projects: st.projects, settings: st.settings,
-           swStats: st.swStats, updatedAt: st.updatedAt };
+           swStats: st.swStats, sw: st.sw, updatedAt: st.updatedAt };
 }
 
 const backup = {
@@ -1565,7 +1567,8 @@ const sw = {
   s(){ return st.sw; },
   now(){ const s = this.s(); return s.acc + (s.running ? nowMs() - s.startedAt : 0); },
 
-  persist(){ save({ sync:false }); },
+  /* save() רגיל — כדי שהפעלה, השהיה ואיפוס ייכנסו לתור הסנכרון הקיים (8 שניות) */
+  persist(){ save(); },
 
   beep(double){
     try {
