@@ -1302,7 +1302,10 @@ const gh = {
 
 /* ═══════════════════ בורר תאריך עברי ═══════════════════ */
 const hc = {
-  cursor: null, mode: "target",
+  cursor: null, mode: "target", onPick: null,
+
+  /* בחירת תאריך לשימוש חיצוני — מחזירה את ה-ISO שנבחר ל-cb */
+  pick(cb){ this.onPick = cb; this.open("log"); },
 
   open(mode){
     this.mode = mode || "target";
@@ -1328,6 +1331,7 @@ const hc = {
           closeModal();
           if (!v) return;
           if (isTarget) { p.targetDate = v; touch(); save(); render(); }
+          else if (this.onPick) { const cb = this.onPick; this.onPick = null; cb(v); }
           else app.askLinesFor(v);
         };
       });
@@ -1412,7 +1416,8 @@ const hc = {
           if (isTarget) {
             p.targetDate = iso; touch(); save(); render();
             toast("היעד נקבע: " + hebStr(new Date(iso + "T00:00:00")), true);
-          } else app.askLinesFor(iso);
+          } else if (this.onPick) { const cb = this.onPick; this.onPick = null; cb(iso); }
+          else app.askLinesFor(iso);
         };
         const clr = document.getElementById("hcClear");
         if (clr) clr.onclick = () => {
@@ -1434,9 +1439,9 @@ const app = {
     if (src === "sw") {
       const ex = live(p).find(h => h.date === t && h.src === "sw");
       if (ex) { ex.lines += n; ex.t = nowMs(); }
-      else p.history.push({ id: uid("s"), date: t, lines: n, src: "sw", t: nowMs() });
+      else p.history.push({ id: uid("s"), date: t, lines: n, src: "sw", t: nowMs(), c: nowMs() });
     } else {
-      p.history.push({ id: uid("h"), date: t, lines: n, src: src || "btn", t: nowMs() });
+      p.history.push({ id: uid("h"), date: t, lines: n, src: src || "btn", t: nowMs(), c: nowMs() });
     }
     touch(); save();
     const D = derive();
@@ -1483,15 +1488,44 @@ const app = {
     });
   },
 
-  editEntry(id){
+  editEntry(id, draft){
     const p = P();
     const e = p.history.find(h => h.id === id);
     if (!e) return;
-    promptBox("עדכון מספר השורות ברישום מ־" + heDate(e.date) + ":", e.lines, v => {
-      if (!v || v <= 0) return;
-      e.lines = v; e.t = nowMs();
-      touch(); save(); toast("עודכן"); render();
-    });
+    const d = draft || { lines: e.lines, date: e.date };
+    const entered = e.c ? new Date(e.c) : null;
+    const moved = entered && isoOf(entered) !== d.date;
+
+    openModal(
+      '<h3>עריכת רישום</h3>' +
+      '<label class="field" style="margin-bottom:12px">מספר שורות' +
+      '<input class="inp" type="number" inputmode="numeric" id="eLines" value="' + esc(d.lines) + '"></label>' +
+      '<div class="field" style="margin-bottom:6px">יום הכתיבה' +
+      '<button class="dateBtn" id="eDate"><b>' + esc(hebStr(new Date(d.date + "T00:00:00")) || heDate(d.date)) +
+      '</b><small>' + esc(new Date(d.date + "T00:00:00").toLocaleDateString("he-IL", {day:"numeric", month:"long", year:"numeric"})) +
+      ' · לחיצה לשינוי</small></button></div>' +
+      (entered
+        ? '<p class="hint" style="margin-bottom:14px">הוזן לאפליקציה ב־' + esc(heDate(isoOf(entered))) +
+          (moved ? ' — יום אחר מיום הכתיבה' : '') + '</p>'
+        : '<p class="hint" style="margin-bottom:14px">לרישום הזה אין תיעוד מתי הוזן — הוא נוצר לפני שהתיעוד הזה נוסף.</p>') +
+      '<div class="rowGap"><button class="solid grow" id="eSave" style="padding:12px;font-weight:700">שמור</button>' +
+      '<button class="ghost grow" id="eCancel">ביטול</button></div>',
+      () => {
+        document.getElementById("eCancel").onclick = closeModal;
+        document.getElementById("eDate").onclick = () => {
+          const cur = parseInt(document.getElementById("eLines").value, 10) || d.lines;
+          closeModal();
+          hc.pick(iso => this.editEntry(id, { lines: cur, date: iso }));
+        };
+        document.getElementById("eSave").onclick = () => {
+          const v = parseInt(document.getElementById("eLines").value, 10);
+          if (!v || v <= 0) { toast("מספר שורות לא תקין"); return; }
+          const changedDate = d.date !== e.date;
+          e.lines = v; e.date = d.date; e.t = nowMs();
+          closeModal(); touch(); save(); render();
+          toast(changedDate ? "הועבר ל־" + heDate(d.date) : "עודכן");
+        };
+      });
   },
 
   tapBlock(i){
@@ -2220,7 +2254,11 @@ function render(){
     ? shown.map(h =>
         '<div class="histRow"><span class="histDate">' + heDate(h.date) +
         (h.src === "sw" ? " ⏱" : h.src === "back" ? " ↩" : "") + '</span>' +
-        '<span class="histLines">' + h.lines + ' שורות</span><span class="grow"></span>' +
+        '<span class="histLines">' + h.lines + ' שורות</span>' +
+        (h.c && isoOf(new Date(h.c)) !== h.date
+          ? '<span class="lapOverTag" style="color:var(--ink3);background:var(--tint);border-color:var(--line)">הוזן ' +
+            heDate(isoOf(new Date(h.c))) + '</span>' : '') +
+        '<span class="grow"></span>' +
         '<button class="ghost small" onclick="app.editEntry(\'' + esc(h.id) + '\')">ערוך</button>' +
         '<button class="dangerGhost small" onclick="app.removeEntry(\'' + esc(h.id) + '\')">מחק</button></div>').join("")
     : '<p class="hint">עוד אין רישומים. השורה הראשונה מחכה.</p>';
